@@ -1,10 +1,12 @@
 import { Router } from "express";
 
 import {
-  createClassroomController,
-  getClassroomController,
-  listClassroomsController,
-} from "../controllers/classroom.controller";
+    addStudentController,
+    createClassroomController,
+    getClassroomController,
+    listClassroomsController,
+    removeStudentController,
+  } from "../controllers/classroom.controller";
 import { ensureAuthenticated } from "../middlewares/auth.middleware";
 import { ensureRole } from "../middlewares/role.middleware";
 
@@ -29,3 +31,12 @@ classroomRouter.get(
   "/:classroomId",
   getClassroomController,
 );
+classroomRouter.post(
+    "/:classroomId/students",
+    addStudentController,
+  );
+  
+  classroomRouter.delete(
+    "/:classroomId/students/:studentId",
+    removeStudentController,
+  );

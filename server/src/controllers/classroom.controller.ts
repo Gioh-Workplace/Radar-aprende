@@ -6,13 +6,17 @@ import type {
   
   import { AppError } from "../errors/app-error";
   import {
+    addStudentToClassroomSchema,
     classroomIdParamsSchema,
+    classroomStudentParamsSchema,
     createClassroomSchema,
   } from "../schemas/classroom.schema";
   import {
+    addStudentToClassroom,
     createClassroom,
     getTeacherClassroomById,
     listTeacherClassrooms,
+    removeStudentFromClassroom,
   } from "../services/classroom.service";
   
   function getAuthenticatedTeacherId(
@@ -106,3 +110,71 @@ import type {
       next(error);
     }
   }
+
+  export async function addStudentController(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const teacherId =
+        getAuthenticatedTeacherId(request);
+  
+      const { classroomId } =
+        classroomIdParamsSchema.parse(
+          request.params,
+        );
+  
+      const { studentId } =
+        addStudentToClassroomSchema.parse(
+          request.body,
+        );
+  
+      const classroom =
+        await addStudentToClassroom(
+          classroomId,
+          studentId,
+          teacherId,
+        );
+  
+      response.status(200).json({
+        message: "Aluno adicionado à turma com sucesso.",
+        classroom,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  
+  export async function removeStudentController(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const teacherId =
+        getAuthenticatedTeacherId(request);
+  
+      const {
+        classroomId,
+        studentId,
+      } = classroomStudentParamsSchema.parse(
+        request.params,
+      );
+  
+      const classroom =
+        await removeStudentFromClassroom(
+          classroomId,
+          studentId,
+          teacherId,
+        );
+  
+      response.status(200).json({
+        message: "Aluno removido da turma com sucesso.",
+        classroom,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  

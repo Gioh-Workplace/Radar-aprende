@@ -19,6 +19,15 @@ export const classroomIdParamsSchema = z.object({
   classroomId: objectIdSchema,
 });
 
+export const addStudentToClassroomSchema = z.object({
+    studentId: objectIdSchema,
+  });
+  
+  export const classroomStudentParamsSchema = z.object({
+    classroomId: objectIdSchema,
+    studentId: objectIdSchema,
+  });
+
 export type CreateClassroomInput = z.infer<
   typeof createClassroomSchema
 >;

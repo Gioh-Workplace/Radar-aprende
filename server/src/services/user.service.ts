@@ -59,3 +59,25 @@ export async function createStudent(
     createdAt: student.createdAt,
   };
 }
+
+export async function listTeacherStudents(
+    teacherId: string,
+  ): Promise<PublicUser[]> {
+    const students = await UserModel.find({
+      role: "STUDENT",
+      createdBy: teacherId,
+      active: true,
+    }).sort({
+      name: 1,
+    });
+  
+    return students.map((student) => ({
+      id: String(student._id),
+      name: student.name,
+      email: student.email ?? null,
+      registration: student.registration ?? null,
+      role: student.role,
+      active: student.active,
+      createdAt: student.createdAt,
+    }));
+  }
