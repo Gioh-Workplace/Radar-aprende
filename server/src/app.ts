@@ -7,6 +7,8 @@ import {
   notFoundHandler,
 } from "./middlewares/error.middleware";
 import { authRouter } from "./routes/auth.routes";
+import { userRouter } from "./routes/user.routes";
+
 
 export const app = express();
 
@@ -30,6 +32,7 @@ app.get("/health", (_request, response) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/users", userRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

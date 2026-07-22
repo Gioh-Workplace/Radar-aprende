@@ -38,10 +38,15 @@ const userSchema = new Schema(
       required: true,
     },
 
-    active: {
-      type: Boolean,
-      default: true,
-    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+      
+      active: {
+        type: Boolean,
+        default: true,
+      },
   },
   {
     timestamps: true,
