@@ -11,7 +11,7 @@ import { userRouter } from "./routes/user.routes";
 import { classroomRouter } from "./routes/classroom.routes";
 import { skillRouter } from "./routes/skill.routes";
 import { assessmentRouter } from "./routes/assessment.routes";
-
+import { studentAssessmentRouter } from "./routes/student-assessment.routes";
 
 export const app = express();
 
@@ -39,7 +39,7 @@ app.use("/users", userRouter);
 app.use("/classrooms", classroomRouter);
 app.use("/skills", skillRouter);
 app.use("/assessments", assessmentRouter);
-
+app.use("/student/assessments", studentAssessmentRouter,);
 
 
 app.use(notFoundHandler);
