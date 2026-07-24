@@ -17,6 +17,7 @@ import {
   createAssessmentDraft,
   getTeacherAssessmentById,
   listTeacherAssessments,
+  publishAssessment,
   removeAssessmentQuestion,
 } from "../services/assessment.service";
 
@@ -184,6 +185,34 @@ export async function removeQuestionController(
     response.status(200).json({
       message:
         "Questão removida com sucesso.",
+      assessment,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function publishAssessmentController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const teacherId =
+      getAuthenticatedTeacherId(request);
+
+    const { assessmentId } =
+      assessmentIdParamsSchema.parse(
+        request.params,
+      );
+
+    const assessment = await publishAssessment(
+      assessmentId,
+      teacherId,
+    );
+
+    response.status(200).json({
+      message: "Avaliação publicada com sucesso.",
       assessment,
     });
   } catch (error) {

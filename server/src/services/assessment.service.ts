@@ -284,3 +284,94 @@ export async function removeAssessmentQuestion(
 
   return mapAssessmentDetails(assessment);
 }
+
+export async function publishAssessment(
+  assessmentId: string,
+  teacherId: string,
+): Promise<PublicAssessmentDetails> {
+  const assessment = await findTeacherAssessment(
+    assessmentId,
+    teacherId,
+  );
+
+  ensureAssessmentIsDraft(assessment);
+
+  const classroomExists = await ClassroomModel.exists({
+    _id: assessment.classroomId,
+    teacherId,
+    active: true,
+  });
+
+  if (!classroomExists) {
+    throw new AppError(
+      404,
+      "A turma vinculada à avaliação não foi encontrada.",
+      "CLASSROOM_NOT_FOUND",
+    );
+  }
+
+  if (assessment.questions.length === 0) {
+    throw new AppError(
+      422,
+      "A avaliação precisa possuir pelo menos uma questão.",
+      "ASSESSMENT_WITHOUT_QUESTIONS",
+    );
+  }
+
+  for (const question of assessment.questions) {
+    if (
+      question.alternatives.length < 2 ||
+      question.alternatives.length > 6
+    ) {
+      throw new AppError(
+        422,
+        "Todas as questões devem possuir entre duas e seis alternativas.",
+        "INVALID_ALTERNATIVES_COUNT",
+      );
+    }
+
+    const correctAlternatives =
+      question.alternatives.filter(
+        (alternative) => alternative.isCorrect,
+      );
+
+    if (correctAlternatives.length !== 1) {
+      throw new AppError(
+        422,
+        "Todas as questões devem possuir exatamente uma alternativa correta.",
+        "INVALID_CORRECT_ALTERNATIVES_COUNT",
+      );
+    }
+  }
+
+  const skillIds = [
+    ...new Set(
+      assessment.questions.map((question) =>
+        String(question.skillId),
+      ),
+    ),
+  ];
+
+  const validSkillsCount = await SkillModel.countDocuments({
+    _id: {
+      $in: skillIds,
+    },
+    teacherId,
+    active: true,
+  });
+
+  if (validSkillsCount !== skillIds.length) {
+    throw new AppError(
+      422,
+      "Uma ou mais habilidades vinculadas à avaliação não estão disponíveis.",
+      "INVALID_ASSESSMENT_SKILLS",
+    );
+  }
+
+  assessment.status = "PUBLISHED";
+  assessment.publishedAt = new Date();
+
+  await assessment.save();
+
+  return mapAssessmentDetails(assessment);
+}

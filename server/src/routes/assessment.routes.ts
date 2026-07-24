@@ -5,6 +5,7 @@ import {
   createAssessmentController,
   getAssessmentController,
   listAssessmentsController,
+  publishAssessmentController,
   removeQuestionController,
 } from "../controllers/assessment.controller";
 import { ensureAuthenticated } from "../middlewares/auth.middleware";
@@ -40,4 +41,9 @@ assessmentRouter.post(
 assessmentRouter.delete(
   "/:assessmentId/questions/:questionId",
   removeQuestionController,
+);
+
+assessmentRouter.post(
+  "/:assessmentId/publish",
+  publishAssessmentController,
 );
