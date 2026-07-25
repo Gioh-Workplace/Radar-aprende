@@ -16,6 +16,10 @@
     "test:coverage": "vitest run --coverage",
     "quality": "npm run typecheck && npm run test:coverage && npm run build"
     },
+  "engines": {
+    "node": "22.x",
+    "npm": "10.x"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
