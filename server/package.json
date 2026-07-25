@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/server.ts",
+    "typecheck": "tsc --noEmit",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "check": "npm run typecheck && npm run build",
+    "dev:check": "npm run check && npm run dev"
   },
   "keywords": [],
   "author": "",
