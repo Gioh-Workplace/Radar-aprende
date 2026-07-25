@@ -46,26 +46,37 @@ export default defineConfig({
     },
 
     coverage: {
-      provider: "v8",
-
-      reporter: [
-        "text",
-        "text-summary",
-        "html",
-        "json",
-      ],
-
-      reportsDirectory: "./coverage",
-
-      include: [
-        "src/**/*.ts",
-      ],
-
-      exclude: [
-        "src/tests/**",
-        "src/database/seeds/**",
-        "src/server.ts",
-      ],
-    },
+        provider: "v8",
+      
+        reporter: [
+          "text",
+          "text-summary",
+          "html",
+          "json",
+        ],
+      
+        reportsDirectory: "./coverage",
+      
+        include: [
+          "src/**/*.ts",
+        ],
+      
+        exclude: [
+          "src/tests/**",
+          "src/database/seeds/**",
+          "src/server.ts",
+          "src/config/database.ts",
+          "src/**/*.d.ts",
+          "src/@types/**",
+          "src/types/**",
+        ],
+      
+        thresholds: {
+          statements: 65,
+          branches: 52,
+          functions: 66,
+          lines: 65,
+        },
+      },
   },
 });
