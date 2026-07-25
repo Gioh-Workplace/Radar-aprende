@@ -1,87 +1,100 @@
+import {
+  Navigate,
+  Route,
+  Routes,
+} from "react-router";
+
 import "./App.css";
 
-function App() {
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { useAuth } from "./hooks/use-auth";
+import { LoginPage } from "./pages/LoginPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { StudentDashboardPage } from "./pages/StudentDashboardPage";
+import { TeacherDashboardPage } from "./pages/TeacherDashboardPage";
+
+function HomeRedirect() {
+  const {
+    user,
+    isLoading,
+  } = useAuth();
+
+  if (isLoading) {
+    return (
+      <main className="loading-page">
+        <p>Carregando sua sessão...</p>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
   return (
-    <main className="home">
-      <section className="hero">
-        <div className="hero__content">
-          <span className="hero__badge">Educação baseada em dados</span>
-
-          <h1>
-            Identifique dificuldades.
-            <span> Transforme a aprendizagem.</span>
-          </h1>
-
-          <p>
-            O RadarAprende ajuda professores a criarem avaliações
-            diagnósticas, acompanharem o desempenho dos alunos por habilidade
-            e planejarem intervenções pedagógicas.
-          </p>
-
-          <div className="hero__actions">
-            <button className="button button--primary" type="button">
-              Acessar como professor
-            </button>
-
-            <button className="button button--secondary" type="button">
-              Acessar como aluno
-            </button>
-          </div>
-        </div>
-
-        <aside className="summary-card">
-          <div className="summary-card__header">
-            <div>
-              <span>Visão geral da turma</span>
-              <strong>7º Ano A</strong>
-            </div>
-
-            <span className="summary-card__status">Atualizado</span>
-          </div>
-
-          <div className="summary-card__score">
-            <span>Desempenho médio</span>
-            <strong>68%</strong>
-          </div>
-
-          <div className="skill">
-            <div className="skill__header">
-              <span>Interpretação de texto</span>
-              <strong>82%</strong>
-            </div>
-            <div className="skill__progress">
-              <div style={{ width: "82%" }} />
-            </div>
-          </div>
-
-          <div className="skill">
-            <div className="skill__header">
-              <span>Raciocínio lógico</span>
-              <strong>64%</strong>
-            </div>
-            <div className="skill__progress">
-              <div style={{ width: "64%" }} />
-            </div>
-          </div>
-
-          <div className="skill">
-            <div className="skill__header">
-              <span>Frações</span>
-              <strong>38%</strong>
-            </div>
-            <div className="skill__progress">
-              <div style={{ width: "38%" }} />
-            </div>
-          </div>
-
-          <p className="summary-card__recommendation">
-            Frações requer atenção. Recomenda-se uma atividade de revisão
-            guiada.
-          </p>
-        </aside>
-      </section>
-    </main>
+    <Navigate
+      to={
+        user.role === "TEACHER"
+          ? "/professor"
+          : "/aluno"
+      }
+      replace
+    />
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={<HomeRedirect />}
+      />
+
+      <Route
+        path="/login"
+        element={<LoginPage />}
+      />
+
+      <Route
+        element={
+          <ProtectedRoute
+            allowedRoles={["TEACHER"]}
+          />
+        }
+      >
+        <Route
+          path="/professor"
+          element={
+            <TeacherDashboardPage />
+          }
+        />
+      </Route>
+
+      <Route
+        element={
+          <ProtectedRoute
+            allowedRoles={["STUDENT"]}
+          />
+        }
+      >
+        <Route
+          path="/aluno"
+          element={
+            <StudentDashboardPage />
+          }
+        />
+      </Route>
+
+      <Route
+        path="*"
+        element={<NotFoundPage />}
+      />
+    </Routes>
+  );
+}
