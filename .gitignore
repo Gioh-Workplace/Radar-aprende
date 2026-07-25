@@ -26,3 +26,6 @@ coverage/
 # Operating system
 .DS_Store
 Thumbs.db
+
+# Test coverage
+server/coverage/
