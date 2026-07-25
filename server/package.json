@@ -8,7 +8,9 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "check": "npm run typecheck && npm run build",
-    "dev:check": "npm run check && npm run dev"
+    "dev:check": "npm run check && npm run dev",
+    "seed:demo": "tsx src/database/seeds/seed.ts --reset",
+    "seed:demo:check": "npm run check && npm run seed:demo"
   },
   "keywords": [],
   "author": "",
