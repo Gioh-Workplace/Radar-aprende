@@ -55,3 +55,34 @@ export async function getTeacherToken(): Promise<string> {
 
   return token;
 }
+
+export async function loginAndGetToken(
+    credential: string,
+    password: string,
+  ): Promise<string> {
+    const response = await loginUser(
+      credential,
+      password,
+    );
+  
+    if (response.status !== 200) {
+      throw new Error(
+        [
+          "Não foi possível autenticar",
+          `a credencial ${credential}.`,
+          `Status recebido: ${response.status}.`,
+        ].join(" "),
+      );
+    }
+  
+    const token: unknown =
+      response.body.token;
+  
+    if (typeof token !== "string") {
+      throw new Error(
+        "O login não retornou um token válido.",
+      );
+    }
+  
+    return token;
+  }
