@@ -10,6 +10,8 @@ import {
 } from "../controllers/assessment.controller";
 import { ensureAuthenticated } from "../middlewares/auth.middleware";
 import { ensureRole } from "../middlewares/role.middleware";
+import { getAssessmentResultsController } from "../controllers/assessment-result.controller";
+
 
 export const assessmentRouter = Router();
 
@@ -46,4 +48,9 @@ assessmentRouter.delete(
 assessmentRouter.post(
   "/:assessmentId/publish",
   publishAssessmentController,
+);
+
+assessmentRouter.get(
+  "/:assessmentId/results",
+  getAssessmentResultsController,
 );
