@@ -20,6 +20,7 @@ interface AssessmentFactoryOptions {
 
 export interface AssessmentQuestionFixture {
   questionId: string;
+  skillId: string;
   correctAlternativeId: string;
   wrongAlternativeId: string;
 }
@@ -190,12 +191,15 @@ export async function createAssessmentFactory(
           return {
             questionId:
               String(question._id),
-
+          
+            skillId:
+              String(question.skillId),
+          
             correctAlternativeId:
               String(
                 correctAlternative._id,
               ),
-
+          
             wrongAlternativeId:
               String(
                 wrongAlternative._id,
