@@ -14,6 +14,6 @@
       "noUncheckedIndexedAccess": true,
       "types": ["node"]
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "src/tests/setup/global.mts"],
     "exclude": ["node_modules", "dist"]
   }
