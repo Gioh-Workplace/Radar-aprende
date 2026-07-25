@@ -36,30 +36,58 @@ export interface QuestionAssessmentResult {
   accuracyRate: number;
 }
 
-export interface SkillAssessmentResult {
-  skillId: string;
-  name: string;
-  subject: string;
-  questionCount: number;
-  correctAnswers: number;
-  totalAnswers: number;
-  accuracyRate: number;
-}
+export type SkillPerformanceLevel =
+  | "CRITICAL"
+  | "DEVELOPING"
+  | "CONSOLIDATED"
+  | "NO_DATA";
 
-export interface AssessmentResults {
-  assessment: {
-    id: string;
-    title: string;
-    classroomId: string;
-    status: string;
+  export interface SkillAssessmentResult {
+    skillId: string;
+    name: string;
+    subject: string;
     questionCount: number;
-  };
+    correctAnswers: number;
+    totalAnswers: number;
+    accuracyRate: number;
+    level: SkillPerformanceLevel;
+  }
 
-  summary: AssessmentResultSummary;
-  students: StudentAssessmentResult[];
-  questions: QuestionAssessmentResult[];
-  skills: SkillAssessmentResult[];
-}
+  export interface PedagogicalRecommendation {
+    skillId: string;
+    skillName: string;
+    level: SkillPerformanceLevel;
+    accuracyRate: number;
+    priority: number;
+    title: string;
+    description: string;
+    actions: string[];
+  }
+  
+  export interface RecommendationSummary {
+    criticalSkills: number;
+    developingSkills: number;
+    consolidatedSkills: number;
+    skillsWithoutData: number;
+  }
+
+  export interface AssessmentResults {
+    assessment: {
+      id: string;
+      title: string;
+      classroomId: string;
+      status: string;
+      questionCount: number;
+    };
+  
+    summary: AssessmentResultSummary;
+    students: StudentAssessmentResult[];
+    questions: QuestionAssessmentResult[];
+    skills: SkillAssessmentResult[];
+  
+    recommendationSummary: RecommendationSummary;
+    recommendations: PedagogicalRecommendation[];
+  }
 
 function roundToTwoDecimals(value: number): number {
   return Number(value.toFixed(2));
@@ -77,6 +105,102 @@ function calculatePercentage(
     (value / total) * 100,
   );
 }
+
+function classifySkillPerformance(
+    accuracyRate: number,
+    totalAnswers: number,
+  ): SkillPerformanceLevel {
+    if (totalAnswers === 0) {
+      return "NO_DATA";
+    }
+  
+    if (accuracyRate < 50) {
+      return "CRITICAL";
+    }
+  
+    if (accuracyRate < 70) {
+      return "DEVELOPING";
+    }
+  
+    return "CONSOLIDATED";
+  }
+
+  function buildPedagogicalRecommendation(
+    skill: SkillAssessmentResult,
+  ): PedagogicalRecommendation {
+    switch (skill.level) {
+      case "CRITICAL":
+        return {
+          skillId: skill.skillId,
+          skillName: skill.name,
+          level: skill.level,
+          accuracyRate: skill.accuracyRate,
+          priority: 1,
+          title: "Intervenção prioritária",
+          description:
+            `A habilidade "${skill.name}" apresentou baixo desempenho e deve ser retomada antes do avanço do conteúdo.`,
+          actions: [
+            "Retomar os conceitos fundamentais com exemplos guiados.",
+            "Organizar uma atividade em pequenos grupos.",
+            "Analisar os erros mais frequentes dos estudantes.",
+            "Aplicar uma nova atividade diagnóstica curta.",
+          ],
+        };
+  
+      case "DEVELOPING":
+        return {
+          skillId: skill.skillId,
+          skillName: skill.name,
+          level: skill.level,
+          accuracyRate: skill.accuracyRate,
+          priority: 2,
+          title: "Habilidade em desenvolvimento",
+          description:
+            `A turma demonstra compreensão parcial da habilidade "${skill.name}", mas ainda precisa de reforço.`,
+          actions: [
+            "Realizar uma revisão direcionada.",
+            "Propor exercícios com dificuldade progressiva.",
+            "Retomar as questões com maior índice de erro.",
+            "Acompanhar o desempenho na próxima avaliação.",
+          ],
+        };
+  
+      case "CONSOLIDATED":
+        return {
+          skillId: skill.skillId,
+          skillName: skill.name,
+          level: skill.level,
+          accuracyRate: skill.accuracyRate,
+          priority: 3,
+          title: "Habilidade consolidada",
+          description:
+            `A turma apresentou domínio satisfatório da habilidade "${skill.name}".`,
+          actions: [
+            "Avançar para conteúdos relacionados.",
+            "Propor atividades de aprofundamento.",
+            "Utilizar problemas contextualizados.",
+            "Manter exercícios periódicos de revisão.",
+          ],
+        };
+  
+      case "NO_DATA":
+        return {
+          skillId: skill.skillId,
+          skillName: skill.name,
+          level: skill.level,
+          accuracyRate: skill.accuracyRate,
+          priority: 4,
+          title: "Dados insuficientes",
+          description:
+            `Ainda não existem respostas suficientes para avaliar a habilidade "${skill.name}".`,
+          actions: [
+            "Incentivar os estudantes pendentes a responder.",
+            "Aguardar novas submissões antes de tomar decisões.",
+            "Evitar classificar a habilidade como dificuldade da turma.",
+          ],
+        };
+    }
+  }
 
 export async function getAssessmentResults(
   assessmentId: string,
@@ -328,24 +452,31 @@ export async function getAssessmentResults(
         }
       }
 
+      const accuracyRate = calculatePercentage(
+        correctAnswers,
+        totalAnswers,
+      );
+      
       return {
         skillId,
+      
         name:
           skill?.name ??
           "Habilidade indisponível",
-
+      
         subject:
           skill?.subject ??
           "Não informado",
-
+      
         questionCount:
           skillQuestions.length,
-
+      
         correctAnswers,
         totalAnswers,
-
-        accuracyRate: calculatePercentage(
-          correctAnswers,
+        accuracyRate,
+      
+        level: classifySkillPerformance(
+          accuracyRate,
           totalAnswers,
         ),
       };
@@ -357,21 +488,66 @@ export async function getAssessmentResults(
       secondSkill.accuracyRate,
   );
 
-  return {
+  const recommendations =
+  skillResults
+    .map(buildPedagogicalRecommendation)
+    .sort(
+      (firstRecommendation, secondRecommendation) => {
+        if (
+          firstRecommendation.priority !==
+          secondRecommendation.priority
+        ) {
+          return (
+            firstRecommendation.priority -
+            secondRecommendation.priority
+          );
+        }
+
+        return (
+          firstRecommendation.accuracyRate -
+          secondRecommendation.accuracyRate
+        );
+      },
+    );
+
+const recommendationSummary: RecommendationSummary = {
+  criticalSkills: skillResults.filter(
+    (skill) => skill.level === "CRITICAL",
+  ).length,
+
+  developingSkills: skillResults.filter(
+    (skill) => skill.level === "DEVELOPING",
+  ).length,
+
+  consolidatedSkills: skillResults.filter(
+    (skill) => skill.level === "CONSOLIDATED",
+  ).length,
+
+  skillsWithoutData: skillResults.filter(
+    (skill) => skill.level === "NO_DATA",
+  ).length,
+};
+
+return {
     assessment: {
       id: String(assessment._id),
       title: assessment.title,
+  
       classroomId: String(
         assessment.classroomId,
       ),
+  
       status: assessment.status,
+  
       questionCount:
         assessment.questions.length,
     },
-
+  
     summary,
     students: studentResults,
     questions: questionResults,
     skills: skillResults,
+    recommendationSummary,
+    recommendations,
   };
 }
