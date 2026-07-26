@@ -400,3 +400,168 @@
       padding: 1.25rem;
     }
   }
+
+  .teacher-feedback {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid #dbe3ef;
+    border-radius: 16px;
+    background: white;
+  }
+  
+  .teacher-feedback strong {
+    display: block;
+    color: #26334d;
+  }
+  
+  .teacher-feedback p {
+    margin: 0.35rem 0 0;
+    color: #738098;
+    line-height: 1.5;
+  }
+  
+  .teacher-feedback.is-error {
+    border-color: #efc2c2;
+    background: #fff7f7;
+  }
+  
+  .teacher-feedback.is-error strong {
+    color: #8f2828;
+  }
+  
+  .teacher-feedback.is-error p {
+    color: #9c4c4c;
+  }
+  
+  .teacher-retry-button {
+    flex: 0 0 auto;
+    padding: 0.7rem 0.95rem;
+    border: 0;
+    border-radius: 10px;
+    color: white;
+    background: #3157d5;
+    font-weight: 750;
+  }
+  
+  .teacher-retry-button:hover {
+    background: #2649bd;
+  }
+  
+  .teacher-classroom-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(
+        auto-fit,
+        minmax(260px, 1fr)
+      );
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .teacher-classroom-card {
+    min-width: 0;
+    padding: 1.4rem;
+    border: 1px solid #dde4f0;
+    border-radius: 18px;
+    background: white;
+    box-shadow:
+      0 12px 30px
+      rgba(36, 52, 86, 0.05);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+  
+  .teacher-classroom-card:hover {
+    border-color: #aab8df;
+    transform: translateY(-2px);
+    box-shadow:
+      0 16px 34px
+      rgba(36, 52, 86, 0.09);
+  }
+  
+  .teacher-classroom-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .teacher-classroom-subject {
+    overflow: hidden;
+    color: #3157d5;
+    font-size: 0.75rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  
+  .teacher-status-badge {
+    flex: 0 0 auto;
+    padding: 0.3rem 0.55rem;
+    border-radius: 999px;
+    color: #23714d;
+    background: #e9f8f0;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+  
+  .teacher-classroom-card h2 {
+    margin: 1rem 0 0;
+    color: #172033;
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+  }
+  
+  .teacher-classroom-metadata {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+  }
+  
+  .teacher-classroom-metadata div {
+    min-width: 0;
+    padding: 0.8rem;
+    border-radius: 12px;
+    background: #f5f7fb;
+  }
+  
+  .teacher-classroom-metadata dt {
+    color: #8490a5;
+    font-size: 0.7rem;
+    font-weight: 750;
+    text-transform: uppercase;
+  }
+  
+  .teacher-classroom-metadata dd {
+    margin: 0.35rem 0 0;
+    overflow: hidden;
+    color: #33405a;
+    font-size: 0.86rem;
+    font-weight: 750;
+    text-overflow: ellipsis;
+  }
+  
+  @media (max-width: 600px) {
+    .teacher-feedback {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .teacher-retry-button {
+      width: 100%;
+    }
+  
+    .teacher-classroom-metadata {
+      grid-template-columns: 1fr;
+    }
+  }
