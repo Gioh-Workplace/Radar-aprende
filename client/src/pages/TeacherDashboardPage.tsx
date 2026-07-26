@@ -1,43 +1,106 @@
+import { Link } from "react-router";
+
+import { TeacherPageHeader } from "../components/TeacherPageHeader";
 import { useAuth } from "../hooks/use-auth";
 
+const summaryCards = [
+  {
+    label: "Turmas ativas",
+    description:
+      "Turmas vinculadas ao professor.",
+  },
+  {
+    label: "Estudantes",
+    description:
+      "Alunos acompanhados nas turmas.",
+  },
+  {
+    label: "Avaliações publicadas",
+    description:
+      "Diagnósticos disponíveis aos alunos.",
+  },
+];
+
 export function TeacherDashboardPage() {
-  const {
-    user,
-    logout,
-  } = useAuth();
+  const { user } = useAuth();
 
   return (
-    <main className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <span className="brand-mark">
-            RadarAprende
-          </span>
+    <>
+      <TeacherPageHeader
+        eyebrow="Visão geral"
+        title={`Olá, ${
+          user?.name?.split(" ")[0] ??
+          "professor"
+        }.`}
+        description="Acompanhe suas turmas, avaliações e habilidades prioritárias em um só lugar."
+      />
 
-          <h1>Painel do professor</h1>
+      <section
+        className="teacher-summary-grid"
+        aria-label="Resumo da plataforma"
+      >
+        {summaryCards.map((card) => (
+          <article
+            key={card.label}
+            className="teacher-summary-card"
+          >
+            <span>{card.label}</span>
+
+            <strong>—</strong>
+
+            <p>{card.description}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="teacher-panel">
+        <div className="teacher-panel-header">
+          <h2>Acessos rápidos</h2>
 
           <p>
-            Olá, {user?.name}.
+            Escolha uma área para continuar
+            o acompanhamento pedagógico.
           </p>
         </div>
 
-        <button
-          className="secondary-button"
-          onClick={logout}
-          type="button"
-        >
-          Sair
-        </button>
-      </header>
+        <div className="teacher-action-grid">
+          <Link
+            to="/professor/turmas"
+            className="teacher-action-card"
+          >
+            <strong>Gerenciar turmas</strong>
 
-      <section className="dashboard-placeholder">
-        <h2>Fundação conectada</h2>
+            <span>
+              Consulte estudantes e organize
+              as turmas acompanhadas.
+            </span>
+          </Link>
 
-        <p>
-          A próxima etapa trará turmas,
-          estudantes, habilidades e avaliações.
-        </p>
+          <Link
+            to="/professor/habilidades"
+            className="teacher-action-card"
+          >
+            <strong>Consultar habilidades</strong>
+
+            <span>
+              Organize as habilidades utilizadas
+              nas avaliações diagnósticas.
+            </span>
+          </Link>
+
+          <Link
+            to="/professor/avaliacoes"
+            className="teacher-action-card"
+          >
+            <strong>Gerenciar avaliações</strong>
+
+            <span>
+              Crie, publique e acompanhe
+              avaliações.
+            </span>
+          </Link>
+        </div>
       </section>
-    </main>
+    </>
   );
 }

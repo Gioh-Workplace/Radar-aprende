@@ -8,10 +8,14 @@ import "./App.css";
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useAuth } from "./hooks/use-auth";
+import { TeacherLayout } from "./layouts/TeacherLayout";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
+import { TeacherAssessmentsPage } from "./pages/TeacherAssessmentsPage";
+import { TeacherClassroomsPage } from "./pages/TeacherClassroomsPage";
 import { TeacherDashboardPage } from "./pages/TeacherDashboardPage";
+import { TeacherSkillsPage } from "./pages/TeacherSkillsPage";
 
 function HomeRedirect() {
   const {
@@ -70,10 +74,28 @@ export default function App() {
       >
         <Route
           path="/professor"
-          element={
-            <TeacherDashboardPage />
-          }
-        />
+          element={<TeacherLayout />}
+        >
+          <Route
+            index
+            element={<TeacherDashboardPage />}
+          />
+
+          <Route
+            path="turmas"
+            element={<TeacherClassroomsPage />}
+          />
+
+          <Route
+            path="habilidades"
+            element={<TeacherSkillsPage />}
+          />
+
+          <Route
+            path="avaliacoes"
+            element={<TeacherAssessmentsPage />}
+          />
+        </Route>
       </Route>
 
       <Route
@@ -85,9 +107,7 @@ export default function App() {
       >
         <Route
           path="/aluno"
-          element={
-            <StudentDashboardPage />
-          }
+          element={<StudentDashboardPage />}
         />
       </Route>
 
