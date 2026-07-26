@@ -21,6 +21,8 @@ import type {
     AssessmentMutationResponse,
     AssessmentResponse,
     TeacherAssessmentDetails,
+    TeacherAssessmentResults,
+    TeacherAssessmentResultsResponse,
   } from "../types/teacher";
 
 export async function getTeacherClassrooms():
@@ -206,4 +208,15 @@ export async function publishTeacherAssessment(
     );
 
   return response.assessment;
+}
+
+export async function getTeacherAssessmentResults(
+  assessmentId: string,
+): Promise<TeacherAssessmentResults> {
+  const response =
+    await apiRequest<TeacherAssessmentResultsResponse>(
+      `/assessments/${assessmentId}/results`,
+    );
+
+  return response.results;
 }

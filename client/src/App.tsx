@@ -20,7 +20,7 @@ import { TeacherClassroomDetailsPage } from "./pages/TeacherClassroomDetailsPage
 import { TeacherAssessmentDetailsPage } from "./pages/TeacherAssessmentDetailsPage";
 import { StudentLayout } from "./layouts/StudentLayout";
 import { StudentAssessmentPage } from "./pages/StudentAssessmentPage";
-
+import { TeacherAssessmentResultsPage } from "./pages/TeacherAssessmentResultsPage";
 
 function HomeRedirect() {
   const {
@@ -114,8 +114,17 @@ export default function App() {
               <TeacherAssessmentDetailsPage />
             }
           />
+          
+            <Route
+            path="avaliacoes/:assessmentId/resultados"
+            element={
+              <TeacherAssessmentResultsPage />
+            }
+          />
+        
         </Route>
-      </Route>
+
+        </Route>
 
       <Route
   element={

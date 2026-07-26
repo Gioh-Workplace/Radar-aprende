@@ -157,3 +157,94 @@ export interface TeacherClassroom {
     message: string;
     assessment: TeacherAssessmentDetails;
   }
+
+  export type TeacherResultStudentStatus =
+  | "SUBMITTED"
+  | "PENDING";
+
+export type SkillPerformanceLevel =
+  | "CRITICAL"
+  | "DEVELOPING"
+  | "CONSOLIDATED"
+  | "NO_DATA";
+
+export interface TeacherAssessmentResultSummary {
+  totalStudents: number;
+  totalSubmissions: number;
+  pendingStudents: number;
+  completionRate: number;
+  averageScore: number | null;
+  highestScore: number | null;
+  lowestScore: number | null;
+}
+
+export interface TeacherStudentAssessmentResult {
+  studentId: string;
+  name: string;
+  registration: string | null;
+  status: TeacherResultStudentStatus;
+  correctAnswers: number | null;
+  totalQuestions: number;
+  score: number | null;
+  submittedAt: string | null;
+}
+
+export interface TeacherQuestionAssessmentResult {
+  questionId: string;
+  position: number;
+  statement: string;
+  skillId: string;
+  correctAnswers: number;
+  totalAnswers: number;
+  accuracyRate: number;
+}
+
+export interface TeacherSkillAssessmentResult {
+  skillId: string;
+  name: string;
+  subject: string;
+  questionCount: number;
+  correctAnswers: number;
+  totalAnswers: number;
+  accuracyRate: number;
+  level: SkillPerformanceLevel;
+}
+
+export interface TeacherPedagogicalRecommendation {
+  skillId: string;
+  skillName: string;
+  level: SkillPerformanceLevel;
+  accuracyRate: number;
+  priority: number;
+  title: string;
+  description: string;
+  actions: string[];
+}
+
+export interface TeacherRecommendationSummary {
+  criticalSkills: number;
+  developingSkills: number;
+  consolidatedSkills: number;
+  skillsWithoutData: number;
+}
+
+export interface TeacherAssessmentResults {
+  assessment: {
+    id: string;
+    title: string;
+    classroomId: string;
+    status: AssessmentStatus;
+    questionCount: number;
+  };
+
+  summary: TeacherAssessmentResultSummary;
+  students: TeacherStudentAssessmentResult[];
+  questions: TeacherQuestionAssessmentResult[];
+  skills: TeacherSkillAssessmentResult[];
+  recommendationSummary: TeacherRecommendationSummary;
+  recommendations: TeacherPedagogicalRecommendation[];
+}
+
+export interface TeacherAssessmentResultsResponse {
+  results: TeacherAssessmentResults;
+}

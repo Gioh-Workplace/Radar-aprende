@@ -529,18 +529,25 @@ import {
             </section>
           </>
         ) : (
-          <section className="teacher-feedback">
+          <section className="teacher-feedback teacher-results-callout">
             <div>
               <strong>
                 Avaliação em modo de leitura
               </strong>
-  
+
               <p>
-                Avaliações publicadas ou
-                encerradas não podem ter suas
-                questões alteradas.
+                Consulte a participação, o desempenho
+                por habilidade e as recomendações
+                pedagógicas desta turma.
               </p>
             </div>
+
+            <Link
+              to={`/professor/avaliacoes/${assessment.id}/resultados`}
+              className="teacher-primary-link"
+            >
+              Ver resultados
+            </Link>
           </section>
         )}
   
