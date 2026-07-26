@@ -1,12 +1,14 @@
 import { apiRequest } from "../lib/api";
 import type {
-  AssessmentsResponse,
-  ClassroomsResponse,
-  StudentsResponse,
-  TeacherAssessment,
-  TeacherClassroom,
-  TeacherStudent,
-} from "../types/teacher";
+    AssessmentsResponse,
+    ClassroomResponse,
+    ClassroomsResponse,
+    StudentsResponse,
+    TeacherAssessment,
+    TeacherClassroom,
+    TeacherClassroomDetails,
+    TeacherStudent,
+  } from "../types/teacher";
 
 export async function getTeacherClassrooms():
 Promise<TeacherClassroom[]> {
@@ -37,3 +39,14 @@ Promise<TeacherAssessment[]> {
 
   return response.assessments;
 }
+
+export async function getTeacherClassroom(
+    classroomId: string,
+  ): Promise<TeacherClassroomDetails> {
+    const response =
+      await apiRequest<ClassroomResponse>(
+        `/classrooms/${classroomId}`,
+      );
+  
+    return response.classroom;
+  }

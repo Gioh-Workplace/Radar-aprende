@@ -1,13 +1,18 @@
 import {
+    useDeferredValue,
     useEffect,
+    useMemo,
     useState,
   } from "react";
+  import { Link } from "react-router";
   
+  import { DataSearch } from "../components/DataSearch";
   import { TeacherPageHeader } from "../components/TeacherPageHeader";
   import { getErrorMessage } from "../lib/get-error-message";
+  import { normalizeSearch } from "../lib/normalize-search";
   import { getTeacherClassrooms } from "../services/teacher-api";
   import type { TeacherClassroom } from "../types/teacher";
-  
+
   function getStudentLabel(
     studentCount: number,
   ): string {
@@ -25,6 +30,38 @@ import {
   
     const [error, setError] =
       useState<string | null>(null);
+
+      const [searchTerm, setSearchTerm] =
+        useState("");
+
+        const deferredSearchTerm =
+        useDeferredValue(searchTerm);
+
+        const filteredClassrooms = useMemo(() => {
+        const normalizedTerm =
+            normalizeSearch(deferredSearchTerm);
+
+        if (!normalizedTerm) {
+            return classrooms;
+        }
+
+        return classrooms.filter((classroom) => {
+            const searchableContent = normalizeSearch(
+            [
+                classroom.name,
+                classroom.subject,
+                classroom.schoolYear,
+            ].join(" "),
+            );
+
+            return searchableContent.includes(
+            normalizedTerm,
+            );
+        });
+        }, [
+        classrooms,
+        deferredSearchTerm,
+        ]);
   
     const [reloadKey, setReloadKey] =
       useState(0);
@@ -75,6 +112,19 @@ import {
           title="Turmas"
           description="Consulte as turmas, acompanhe os estudantes e organize o contexto das avaliações."
         />
+
+        {!isLoading &&
+        !error &&
+        classrooms.length > 0 && (
+            <DataSearch
+            value={searchTerm}
+            onChange={setSearchTerm}
+            label="Pesquisar turmas"
+            placeholder="Buscar por nome, disciplina ou ano escolar..."
+            resultCount={filteredClassrooms.length}
+            totalCount={classrooms.length}
+            />
+        )}
   
         {isLoading && (
           <section
@@ -138,19 +188,45 @@ import {
               </p>
             </section>
           )}
+
+        {!isLoading &&
+        !error &&
+        classrooms.length > 0 &&
+        filteredClassrooms.length === 0 && (
+            <section className="teacher-empty-state">
+            <h2>
+                Nenhuma turma encontrada
+            </h2>
+
+            <p>
+                Não encontramos turmas correspondentes
+                a “{searchTerm}”. Tente outro nome,
+                disciplina ou ano escolar.
+            </p>
+
+            <button
+                type="button"
+                className="teacher-empty-action"
+                onClick={() => setSearchTerm("")}
+            >
+                Limpar busca
+            </button>
+            </section>
+        )}
   
         {!isLoading &&
           !error &&
-          classrooms.length > 0 && (
+          filteredClassrooms.length > 0 && (
             <section
               className="teacher-classroom-grid"
               aria-label="Turmas cadastradas"
             >
-              {classrooms.map((classroom) => (
-                <article
-                  key={classroom.id}
-                  className="teacher-classroom-card"
-                >
+              {filteredClassrooms.map((classroom) => (
+                    <Link
+                    key={classroom.id}
+                    to={`/professor/turmas/${classroom.id}`}
+                    className="teacher-classroom-card"
+                    >
                   <div className="teacher-classroom-card-header">
                     <span className="teacher-classroom-subject">
                       {classroom.subject}
@@ -182,7 +258,10 @@ import {
                       </dd>
                     </div>
                   </dl>
-                </article>
+                  <span className="teacher-classroom-link-label">
+                    Ver detalhes da turma
+                  </span>
+                </Link>
               ))}
             </section>
           )}

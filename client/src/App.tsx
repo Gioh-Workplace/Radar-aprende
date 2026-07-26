@@ -16,6 +16,8 @@ import { TeacherAssessmentsPage } from "./pages/TeacherAssessmentsPage";
 import { TeacherClassroomsPage } from "./pages/TeacherClassroomsPage";
 import { TeacherDashboardPage } from "./pages/TeacherDashboardPage";
 import { TeacherSkillsPage } from "./pages/TeacherSkillsPage";
+import { TeacherClassroomDetailsPage } from "./pages/TeacherClassroomDetailsPage";
+
 
 function HomeRedirect() {
   const {
@@ -84,6 +86,13 @@ export default function App() {
           <Route
             path="turmas"
             element={<TeacherClassroomsPage />}
+          />
+
+          <Route
+            path="turmas/:classroomId"
+            element={
+              <TeacherClassroomDetailsPage />
+            }
           />
 
           <Route

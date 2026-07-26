@@ -50,3 +50,19 @@ export interface TeacherClassroom {
     assessments: TeacherAssessment[];
     total: number;
   }
+
+  export interface TeacherClassroomStudent {
+    id: string;
+    name: string;
+    registration: string | null;
+    active: boolean;
+  }
+  
+  export interface TeacherClassroomDetails
+    extends TeacherClassroom {
+    students: TeacherClassroomStudent[];
+  }
+  
+  export interface ClassroomResponse {
+    classroom: TeacherClassroomDetails;
+  }
