@@ -17,7 +17,7 @@ import { TeacherClassroomsPage } from "./pages/TeacherClassroomsPage";
 import { TeacherDashboardPage } from "./pages/TeacherDashboardPage";
 import { TeacherSkillsPage } from "./pages/TeacherSkillsPage";
 import { TeacherClassroomDetailsPage } from "./pages/TeacherClassroomDetailsPage";
-
+import { TeacherAssessmentDetailsPage } from "./pages/TeacherAssessmentDetailsPage";
 
 function HomeRedirect() {
   const {
@@ -103,6 +103,13 @@ export default function App() {
           <Route
             path="avaliacoes"
             element={<TeacherAssessmentsPage />}
+          />
+
+          <Route
+            path="avaliacoes/:assessmentId"
+            element={
+              <TeacherAssessmentDetailsPage />
+            }
           />
         </Route>
       </Route>

@@ -17,6 +17,10 @@ import type {
     TeacherSkill,
     CreateTeacherAssessmentInput,
     CreateTeacherAssessmentResponse,
+    AddTeacherAssessmentQuestionInput,
+    AssessmentMutationResponse,
+    AssessmentResponse,
+    TeacherAssessmentDetails,
   } from "../types/teacher";
 
 export async function getTeacherClassrooms():
@@ -142,6 +146,62 @@ export async function createTeacherAssessment(
       {
         method: "POST",
         body: JSON.stringify(input),
+      },
+    );
+
+  return response.assessment;
+}
+
+export async function getTeacherAssessment(
+  assessmentId: string,
+): Promise<TeacherAssessmentDetails> {
+  const response =
+    await apiRequest<AssessmentResponse>(
+      `/assessments/${assessmentId}`,
+    );
+
+  return response.assessment;
+}
+
+export async function addTeacherAssessmentQuestion(
+  assessmentId: string,
+  input: AddTeacherAssessmentQuestionInput,
+): Promise<TeacherAssessmentDetails> {
+  const response =
+    await apiRequest<AssessmentMutationResponse>(
+      `/assessments/${assessmentId}/questions`,
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      },
+    );
+
+  return response.assessment;
+}
+
+export async function removeTeacherAssessmentQuestion(
+  assessmentId: string,
+  questionId: string,
+): Promise<TeacherAssessmentDetails> {
+  const response =
+    await apiRequest<AssessmentMutationResponse>(
+      `/assessments/${assessmentId}/questions/${questionId}`,
+      {
+        method: "DELETE",
+      },
+    );
+
+  return response.assessment;
+}
+
+export async function publishTeacherAssessment(
+  assessmentId: string,
+): Promise<TeacherAssessmentDetails> {
+  const response =
+    await apiRequest<AssessmentMutationResponse>(
+      `/assessments/${assessmentId}/publish`,
+      {
+        method: "POST",
       },
     );
 

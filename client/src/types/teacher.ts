@@ -119,3 +119,41 @@ export interface TeacherClassroom {
     message: string;
     assessment: TeacherAssessment;
   }
+
+  export interface TeacherAssessmentAlternative {
+    id: string;
+    text: string;
+    isCorrect: boolean;
+  }
+  
+  export interface TeacherAssessmentQuestion {
+    id: string;
+    statement: string;
+    skillId: string;
+    alternatives: TeacherAssessmentAlternative[];
+  }
+  
+  export interface TeacherAssessmentDetails
+    extends TeacherAssessment {
+    questions: TeacherAssessmentQuestion[];
+    publishedAt: string | null;
+  }
+  
+  export interface AssessmentResponse {
+    assessment: TeacherAssessmentDetails;
+  }
+  
+  export interface AddTeacherAssessmentQuestionInput {
+    statement: string;
+    skillId: string;
+  
+    alternatives: Array<{
+      text: string;
+      isCorrect: boolean;
+    }>;
+  }
+  
+  export interface AssessmentMutationResponse {
+    message: string;
+    assessment: TeacherAssessmentDetails;
+  }

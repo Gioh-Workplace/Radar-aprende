@@ -4,6 +4,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { Link } from "react-router";
 
 import { AssessmentCreationForm } from "../components/AssessmentCreationForm";
 import { DataSearch } from "../components/DataSearch";
@@ -588,8 +589,9 @@ export function TeacherAssessmentsPage() {
                   );
 
                 return (
-                  <article
+                  <Link
                     key={assessment.id}
+                    to={`/professor/avaliacoes/${assessment.id}`}
                     className="teacher-assessment-card"
                   >
                     <div className="teacher-assessment-card-header">
@@ -649,7 +651,13 @@ export function TeacherAssessmentsPage() {
                         ? "Pronta para adicionar questões"
                         : "Avaliação disponível para acompanhamento"}
                     </span>
-                  </article>
+                    
+                    <span className="teacher-assessment-open-label">
+                      {assessment.status === "DRAFT"
+                        ? "Editar avaliação"
+                        : "Abrir avaliação"}
+                    </span>
+                  </Link>
                 );
               },
             )}
