@@ -108,3 +108,14 @@ export interface TeacherClassroom {
     message: string;
     skill: TeacherSkill;
   }
+
+  export interface CreateTeacherAssessmentInput {
+    title: string;
+    description?: string;
+    classroomId: string;
+  }
+  
+  export interface CreateTeacherAssessmentResponse {
+    message: string;
+    assessment: TeacherAssessment;
+  }

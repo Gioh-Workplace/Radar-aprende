@@ -15,6 +15,8 @@ import type {
     CreateTeacherSkillResponse,
     SkillsResponse,
     TeacherSkill,
+    CreateTeacherAssessmentInput,
+    CreateTeacherAssessmentResponse,
   } from "../types/teacher";
 
 export async function getTeacherClassrooms():
@@ -129,4 +131,19 @@ export async function createTeacherSkill(
     );
 
   return response.skill;
+}
+
+export async function createTeacherAssessment(
+  input: CreateTeacherAssessmentInput,
+): Promise<TeacherAssessment> {
+  const response =
+    await apiRequest<CreateTeacherAssessmentResponse>(
+      "/assessments",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      },
+    );
+
+  return response.assessment;
 }
