@@ -15,15 +15,19 @@ import {
   import { normalizeSearch } from "../lib/normalize-search";
   import {
     addTeacherStudentToClassroom,
+    createTeacherStudent,
     getTeacherClassroom,
     getTeacherStudents,
     removeTeacherStudentFromClassroom,
   } from "../services/teacher-api";
   import type {
+    CreateTeacherStudentInput,
     TeacherClassroomDetails,
     TeacherStudent,
   } from "../types/teacher";
-  
+  import { StudentCreationForm } from "../components/StudentCreationForm";
+
+
   function getStudentCountLabel(
     studentCount: number,
   ): string {
@@ -192,6 +196,73 @@ import {
       teacherStudents,
     ]);
   
+    async function handleCreateStudent(
+        input: CreateTeacherStudentInput,
+      ): Promise<boolean> {
+        if (!classroomId) {
+          setManagementError(
+            "O identificador da turma não foi informado.",
+          );
+      
+          return false;
+        }
+      
+        setManagementError(null);
+        setManagementSuccess(null);
+      
+        let createdStudent:
+          TeacherStudent | null = null;
+      
+        try {
+          createdStudent =
+            await createTeacherStudent(input);
+      
+          setTeacherStudents(
+            (currentStudents) =>
+              [
+                ...currentStudents,
+                createdStudent as TeacherStudent,
+              ].sort((firstStudent, secondStudent) =>
+                firstStudent.name.localeCompare(
+                  secondStudent.name,
+                  "pt-BR",
+                ),
+              ),
+          );
+      
+          const updatedClassroom =
+            await addTeacherStudentToClassroom(
+              classroomId,
+              createdStudent.id,
+            );
+      
+          setClassroom(updatedClassroom);
+      
+          setManagementSuccess(
+            `${createdStudent.name} foi cadastrado e associado à turma.`,
+          );
+      
+          return true;
+        } catch (caughtError) {
+          if (createdStudent) {
+            setManagementError(
+              `${createdStudent.name} foi cadastrado, mas não foi possível associá-lo automaticamente à turma. Ele está disponível na seleção de estudantes existentes.`,
+            );
+      
+            return true;
+          }
+      
+          setManagementError(
+            getErrorMessage(
+              caughtError,
+              "Não foi possível cadastrar o estudante.",
+            ),
+          );
+      
+          return false;
+        }
+      }
+
     async function handleAddStudent() {
       if (
         !classroomId ||
@@ -390,7 +461,49 @@ import {
             </strong>
           </article>
         </section>
+
+        <section className="teacher-panel">
+        <div className="teacher-panel-header">
+            <h2>Cadastrar novo estudante</h2>
+
+            <p>
+            Crie o acesso do estudante e associe-o
+            automaticamente a esta turma.
+            </p>
+        </div>
+
+        <StudentCreationForm
+            onSubmit={handleCreateStudent}
+        />
+
+        <div className="teacher-form-help">
+            <strong>Sobre o acesso</strong>
+
+            <p>
+            O estudante entrará na plataforma usando
+            a matrícula e a senha cadastradas acima.
+            </p>
+        </div>
+        </section>
+
+        {managementSuccess && (
+            <div
+              className="teacher-inline-feedback is-success"
+              role="status"
+            >
+              {managementSuccess}
+            </div>
+          )}
   
+          {managementError && (
+            <div
+              className="teacher-inline-feedback is-error"
+              role="alert"
+            >
+              {managementError}
+            </div>
+          )}
+
         <section className="teacher-panel">
           <div className="teacher-panel-header">
             <h2>Gerenciar estudantes</h2>
@@ -466,23 +579,7 @@ import {
             </div>
           </div>
   
-          {managementSuccess && (
-            <div
-              className="teacher-inline-feedback is-success"
-              role="status"
-            >
-              {managementSuccess}
-            </div>
-          )}
-  
-          {managementError && (
-            <div
-              className="teacher-inline-feedback is-error"
-              role="alert"
-            >
-              {managementError}
-            </div>
-          )}
+         
         </section>
   
         <section className="teacher-panel">

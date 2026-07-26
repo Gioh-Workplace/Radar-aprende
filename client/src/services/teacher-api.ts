@@ -4,6 +4,8 @@ import type {
     ClassroomMutationResponse,
     ClassroomResponse,
     ClassroomsResponse,
+    CreateTeacherStudentInput,
+    CreateTeacherStudentResponse,
     StudentsResponse,
     TeacherAssessment,
     TeacherClassroom,
@@ -83,4 +85,19 @@ export async function removeTeacherStudentFromClassroom(
       );
   
     return response.classroom;
+  }
+
+  export async function createTeacherStudent(
+    input: CreateTeacherStudentInput,
+  ): Promise<TeacherStudent> {
+    const response =
+      await apiRequest<CreateTeacherStudentResponse>(
+        "/users/students",
+        {
+          method: "POST",
+          body: JSON.stringify(input),
+        },
+      );
+  
+    return response.student;
   }

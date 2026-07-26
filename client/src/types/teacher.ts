@@ -71,3 +71,14 @@ export interface TeacherClassroom {
     message: string;
     classroom: TeacherClassroomDetails;
   }
+
+  export interface CreateTeacherStudentInput {
+    name: string;
+    registration: string;
+    password: string;
+  }
+  
+  export interface CreateTeacherStudentResponse {
+    message: string;
+    student: TeacherStudent;
+  }

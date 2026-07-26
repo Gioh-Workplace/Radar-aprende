@@ -938,3 +938,96 @@
       width: 100%;
     }
   }
+
+  .teacher-student-creation-form {
+    display: grid;
+    grid-template-columns:
+      minmax(180px, 1.4fr)
+      minmax(150px, 0.9fr)
+      minmax(170px, 1fr)
+      auto;
+    align-items: end;
+    gap: 0.9rem;
+    margin-top: 1.4rem;
+    padding: 1.2rem;
+    border: 1px solid #dde4f0;
+    border-radius: 16px;
+    background: #f8fafe;
+  }
+  
+  .teacher-form-field {
+    min-width: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  
+  .teacher-form-field label {
+    color: #26334d;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+  
+  .teacher-form-field input {
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid #cfd8e7;
+    border-radius: 11px;
+    color: #26334d;
+    background: white;
+  }
+  
+  .teacher-form-field input::placeholder {
+    color: #94a0b4;
+  }
+  
+  .teacher-form-field input:focus {
+    border-color: #3157d5;
+    outline:
+      3px solid
+      rgba(49, 87, 213, 0.14);
+  }
+  
+  .teacher-form-field input:disabled {
+    color: #8490a5;
+    background: #edf1f6;
+  }
+  
+  .teacher-form-help {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    border-left: 3px solid #9dadde;
+    border-radius: 0 10px 10px 0;
+    background: #f5f7fc;
+  }
+  
+  .teacher-form-help strong {
+    color: #44516b;
+    font-size: 0.8rem;
+  }
+  
+  .teacher-form-help p {
+    margin: 0.3rem 0 0;
+    color: #738098;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  
+  @media (max-width: 1100px) {
+    .teacher-student-creation-form {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (max-width: 650px) {
+    .teacher-student-creation-form {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-student-creation-form
+    .teacher-primary-button {
+      width: 100%;
+    }
+  }
