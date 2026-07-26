@@ -82,3 +82,29 @@ export interface TeacherClassroom {
     message: string;
     student: TeacherStudent;
   }
+
+  export interface TeacherSkill {
+    id: string;
+    name: string;
+    description: string | null;
+    subject: string;
+    teacherId: string;
+    active: boolean;
+    createdAt: string;
+  }
+  
+  export interface SkillsResponse {
+    skills: TeacherSkill[];
+    total: number;
+  }
+  
+  export interface CreateTeacherSkillInput {
+    name: string;
+    subject: string;
+    description?: string;
+  }
+  
+  export interface CreateTeacherSkillResponse {
+    message: string;
+    skill: TeacherSkill;
+  }

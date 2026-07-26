@@ -11,6 +11,10 @@ import type {
     TeacherClassroom,
     TeacherClassroomDetails,
     TeacherStudent,
+    CreateTeacherSkillInput,
+    CreateTeacherSkillResponse,
+    SkillsResponse,
+    TeacherSkill,
   } from "../types/teacher";
 
 export async function getTeacherClassrooms():
@@ -101,3 +105,28 @@ export async function removeTeacherStudentFromClassroom(
   
     return response.student;
   }
+
+  export async function getTeacherSkills():
+Promise<TeacherSkill[]> {
+  const response =
+    await apiRequest<SkillsResponse>(
+      "/skills",
+    );
+
+  return response.skills;
+}
+
+export async function createTeacherSkill(
+  input: CreateTeacherSkillInput,
+): Promise<TeacherSkill> {
+  const response =
+    await apiRequest<CreateTeacherSkillResponse>(
+      "/skills",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      },
+    );
+
+  return response.skill;
+}
