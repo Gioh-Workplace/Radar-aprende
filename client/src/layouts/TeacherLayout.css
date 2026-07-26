@@ -812,3 +812,129 @@
       align-self: flex-end;
     }
   }
+
+  .teacher-student-management {
+    display: grid;
+    grid-template-columns:
+      minmax(200px, 0.7fr)
+      minmax(300px, 1.3fr);
+    align-items: end;
+    gap: 1.5rem;
+    margin-top: 1.4rem;
+    padding: 1.2rem;
+    border: 1px solid #dde4f0;
+    border-radius: 16px;
+    background: #f8fafe;
+  }
+  
+  .teacher-student-management label {
+    display: block;
+    color: #26334d;
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+  
+  .teacher-student-management p {
+    margin: 0.4rem 0 0;
+    color: #738098;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-student-association-controls {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+    gap: 0.75rem;
+  }
+  
+  .teacher-student-association-controls select {
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.75rem 2.5rem 0.75rem 0.9rem;
+    border: 1px solid #cfd8e7;
+    border-radius: 11px;
+    color: #26334d;
+    background: white;
+  }
+  
+  .teacher-student-association-controls select:focus {
+    border-color: #3157d5;
+    outline:
+      3px solid
+      rgba(49, 87, 213, 0.14);
+  }
+  
+  .teacher-primary-button {
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-radius: 11px;
+    color: white;
+    background: #3157d5;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  
+  .teacher-primary-button:hover:not(:disabled) {
+    background: #2649bd;
+  }
+  
+  .teacher-primary-button:disabled {
+    opacity: 0.58;
+  }
+  
+  .teacher-danger-button {
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #efc2c2;
+    border-radius: 9px;
+    color: #9b3030;
+    background: #fff7f7;
+    font-size: 0.75rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  
+  .teacher-danger-button:hover:not(:disabled) {
+    border-color: #da9292;
+    background: #ffeded;
+  }
+  
+  .teacher-inline-feedback {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 11px;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  
+  .teacher-inline-feedback.is-success {
+    border: 1px solid #b9e1cd;
+    color: #24704c;
+    background: #edf9f3;
+  }
+  
+  .teacher-inline-feedback.is-error {
+    border: 1px solid #efc2c2;
+    color: #982f2f;
+    background: #fff4f4;
+  }
+  
+  @media (max-width: 820px) {
+    .teacher-student-management {
+      grid-template-columns: 1fr;
+      align-items: stretch;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .teacher-student-association-controls {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-primary-button {
+      width: 100%;
+    }
+  }

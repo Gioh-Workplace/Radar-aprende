@@ -1,6 +1,7 @@
 import { apiRequest } from "../lib/api";
 import type {
     AssessmentsResponse,
+    ClassroomMutationResponse,
     ClassroomResponse,
     ClassroomsResponse,
     StudentsResponse,
@@ -46,6 +47,39 @@ export async function getTeacherClassroom(
     const response =
       await apiRequest<ClassroomResponse>(
         `/classrooms/${classroomId}`,
+      );
+  
+    return response.classroom;
+  }
+
+export async function addTeacherStudentToClassroom(
+    classroomId: string,
+    studentId: string,
+  ): Promise<TeacherClassroomDetails> {
+    const response =
+      await apiRequest<ClassroomMutationResponse>(
+        `/classrooms/${classroomId}/students`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            studentId,
+          }),
+        },
+      );
+  
+    return response.classroom;
+  }
+  
+export async function removeTeacherStudentFromClassroom(
+    classroomId: string,
+    studentId: string,
+  ): Promise<TeacherClassroomDetails> {
+    const response =
+      await apiRequest<ClassroomMutationResponse>(
+        `/classrooms/${classroomId}/students/${studentId}`,
+        {
+          method: "DELETE",
+        },
       );
   
     return response.classroom;

@@ -66,3 +66,8 @@ export interface TeacherClassroom {
   export interface ClassroomResponse {
     classroom: TeacherClassroomDetails;
   }
+
+  export interface ClassroomMutationResponse {
+    message: string;
+    classroom: TeacherClassroomDetails;
+  }
