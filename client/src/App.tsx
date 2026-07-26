@@ -18,6 +18,9 @@ import { TeacherDashboardPage } from "./pages/TeacherDashboardPage";
 import { TeacherSkillsPage } from "./pages/TeacherSkillsPage";
 import { TeacherClassroomDetailsPage } from "./pages/TeacherClassroomDetailsPage";
 import { TeacherAssessmentDetailsPage } from "./pages/TeacherAssessmentDetailsPage";
+import { StudentLayout } from "./layouts/StudentLayout";
+import { StudentAssessmentPage } from "./pages/StudentAssessmentPage";
+
 
 function HomeRedirect() {
   const {
@@ -115,17 +118,27 @@ export default function App() {
       </Route>
 
       <Route
-        element={
-          <ProtectedRoute
-            allowedRoles={["STUDENT"]}
-          />
-        }
-      >
-        <Route
-          path="/aluno"
-          element={<StudentDashboardPage />}
-        />
-      </Route>
+  element={
+    <ProtectedRoute
+      allowedRoles={["STUDENT"]}
+    />
+  }
+>
+  <Route
+    path="/aluno"
+    element={<StudentLayout />}
+  >
+    <Route
+      index
+      element={<StudentDashboardPage />}
+    />
+
+    <Route
+      path="avaliacoes/:assessmentId"
+      element={<StudentAssessmentPage />}
+    />
+  </Route>
+</Route>
 
       <Route
         path="*"
