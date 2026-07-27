@@ -19,6 +19,10 @@ import {
     StudentAssessmentDetails,
     StudentSubmission,
   } from "../types/student";
+
+  import { StudentQuestionFlow } from "../features/student-assessment/StudentQuestionFlow";
+
+  import "../styles/student-assessment-flow.css";
   
   function formatScore(
     score: number,
@@ -471,152 +475,22 @@ import {
     }
   
     return (
-      <>
-        <Link
-          to="/aluno"
-          className="student-back-link"
-        >
-          ← Voltar para avaliações
-        </Link>
-  
-        <header className="student-page-header">
-          <span>Avaliação diagnóstica</span>
-  
-          <h1>{assessment.title}</h1>
-  
-          <p>
-            {assessment.description ??
-              "Responda todas as questões e revise antes de enviar."}
-          </p>
-        </header>
-  
-        <section className="student-assessment-progress">
-          <div>
-            <strong>
-              {answeredQuestionCount} de{" "}
-              {assessment.questions.length}
-            </strong>
-  
-            <span>
-              questões respondidas
-            </span>
-          </div>
-  
-          <progress
-            value={answeredQuestionCount}
-            max={assessment.questions.length}
-          />
-        </section>
-  
-        <form
-          className="student-question-form"
-          onSubmit={handleSubmit}
-        >
-          {assessment.questions.map(
-            (question, questionIndex) => (
-              <fieldset
-                key={question.id}
-                className="student-question-card"
-              >
-                <legend>
-                  Questão {questionIndex + 1}
-                </legend>
-  
-                <h2>
-                  {question.statement}
-                </h2>
-  
-                <div className="student-alternative-list">
-                  {question.alternatives.map(
-                    (alternative, alternativeIndex) => (
-                      <label
-                        key={alternative.id}
-                        className={[
-                          "student-alternative-option",
-                          selectedAnswers[
-                            question.id
-                          ] === alternative.id
-                            ? "is-selected"
-                            : "",
-                        ].join(" ")}
-                      >
-                        <input
-                          type="radio"
-                          name={`question-${question.id}`}
-                          value={alternative.id}
-                          checked={
-                            selectedAnswers[
-                              question.id
-                            ] === alternative.id
-                          }
-                          onChange={() =>
-                            selectAlternative(
-                              question.id,
-                              alternative.id,
-                            )
-                          }
-                          disabled={
-                            isSubmitting
-                          }
-                        />
-  
-                        <span
-                          className="student-alternative-letter"
-                          aria-hidden="true"
-                        >
-                          {String.fromCharCode(
-                            65 +
-                              alternativeIndex,
-                          )}
-                        </span>
-  
-                        <span>
-                          {alternative.text}
-                        </span>
-                      </label>
-                    ),
-                  )}
-                </div>
-              </fieldset>
-            ),
-          )}
-  
-          {submissionError && (
-            <div
-              className="student-inline-error"
-              role="alert"
-            >
-              {submissionError}
-            </div>
-          )}
-  
-          <section className="student-submit-panel">
-            <div>
-              <strong>
-                Revise antes de enviar
-              </strong>
-  
-              <p>
-                O envio é definitivo e esta
-                avaliação não poderá ser
-                respondida novamente.
-              </p>
-            </div>
-  
-            <button
-              type="submit"
-              disabled={
-                isSubmitting ||
-                answeredQuestionCount !==
-                  assessment.questions.length
-              }
-            >
-              {isSubmitting
-                ? "Enviando..."
-                : "Enviar avaliação"}
-            </button>
-          </section>
-        </form>
-      </>
+      <StudentQuestionFlow
+        assessment={assessment}
+        selectedAnswers={
+          selectedAnswers
+        }
+        answeredQuestionCount={
+          answeredQuestionCount
+        }
+        isSubmitting={isSubmitting}
+        submissionError={
+          submissionError
+        }
+        onSelect={
+          selectAlternative
+        }
+        onSubmit={handleSubmit}
+      />
     );
   }
