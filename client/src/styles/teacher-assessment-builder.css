@@ -1,0 +1,664 @@
+.teacher-assessment-builder-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .teacher-assessment-builder-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  
+  .teacher-assessment-builder-overview {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+  
+  .teacher-assessment-builder-layout {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1.55fr)
+      minmax(280px, 0.55fr);
+    align-items: start;
+    gap: 1rem;
+  }
+  
+  .teacher-assessment-builder-main {
+    min-width: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .teacher-assessment-builder-panel {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .teacher-assessment-builder-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .teacher-assessment-builder-panel-header h2,
+  .assessment-builder-sidebar-header h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 720;
+    letter-spacing: -0.025em;
+  }
+  
+  .teacher-assessment-builder-panel-header p,
+  .assessment-builder-sidebar-header p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessment-question-editor {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #dadaf6;
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(
+        135deg,
+        var(--color-surface),
+        var(--color-primary-softer)
+      );
+  }
+  
+  .teacher-assessment-question-editor-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .teacher-assessment-question-editor-header h3 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+  
+  .teacher-assessment-question-editor-header p {
+    margin: 0.3rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.73rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessment-question-list {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+  
+  .assessment-builder-question-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .assessment-builder-question-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .assessment-builder-question-header
+  > div {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+  
+  .assessment-builder-question-number {
+    color: var(--color-primary);
+    font-size: 0.69rem;
+    font-weight: 730;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  
+  .assessment-builder-question-skill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-text-soft);
+    font-size: 0.69rem;
+    font-weight: 650;
+  }
+  
+  .assessment-builder-question-subject {
+    display: block;
+    margin-top: 0.55rem;
+    color: var(--color-text-subtle);
+    font-size: 0.67rem;
+    font-weight: 620;
+  }
+  
+  .assessment-builder-question-card h3 {
+    margin: 0.85rem 0 0;
+    color: var(--color-text);
+    font-size: 0.91rem;
+    font-weight: 680;
+    line-height: 1.55;
+  }
+  
+  .assessment-builder-remove-question.ui-button {
+    min-height: 2.25rem;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.7rem;
+  }
+  
+  .assessment-builder-alternatives {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .assessment-builder-alternatives li {
+    min-width: 0;
+    display: grid;
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-soft);
+    background: var(--color-surface);
+  }
+  
+  .assessment-builder-alternatives
+  li.is-correct {
+    border-color: #bfe0ce;
+    color: var(--color-success);
+    background: var(--color-success-soft);
+  }
+  
+  .assessment-builder-alternative-letter {
+    width: 1.85rem;
+    height: 1.85rem;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-soft);
+    background: var(--color-surface-emphasis);
+    font-size: 0.68rem;
+    font-weight: 750;
+  }
+  
+  li.is-correct
+  .assessment-builder-alternative-letter {
+    color: var(--color-success);
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
+  .assessment-builder-alternative-text {
+    min-width: 0;
+    color: inherit;
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+  
+  .assessment-builder-correct-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-success);
+    font-size: 0.67rem;
+    font-weight: 720;
+    white-space: nowrap;
+  }
+  
+  .teacher-assessment-builder-sidebar {
+    position: sticky;
+    top: 1.5rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+  
+  .assessment-builder-progress,
+  .teacher-assessment-publish-card,
+  .teacher-assessment-results-card {
+    padding: 1.15rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .assessment-builder-progress ol {
+    display: grid;
+    gap: 0;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .assessment-builder-progress li {
+    position: relative;
+    min-width: 0;
+    display: grid;
+    grid-template-columns:
+      auto
+      minmax(0, 1fr);
+    gap: 0.7rem;
+    padding-bottom: 1rem;
+  }
+  
+  .assessment-builder-progress
+  li:last-child {
+    padding-bottom: 0;
+  }
+  
+  .assessment-builder-progress
+  li:not(:last-child)::after {
+    position: absolute;
+    top: 1.7rem;
+    bottom: 0.15rem;
+    left: 0.84rem;
+    width: 1px;
+    content: "";
+    background: var(--color-border);
+  }
+  
+  .assessment-builder-step-icon {
+    position: relative;
+    z-index: 1;
+    width: 1.7rem;
+    height: 1.7rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid
+      var(--color-border);
+    border-radius: 50%;
+    color: var(--color-text-subtle);
+    background: var(--color-surface);
+  }
+  
+  .assessment-builder-progress
+  li.is-complete
+  .assessment-builder-step-icon {
+    border-color: var(--color-success);
+    color: white;
+    background: var(--color-success);
+  }
+  
+  .assessment-builder-progress
+  li.is-current
+  .assessment-builder-step-icon {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+  }
+  
+  .assessment-builder-progress strong {
+    display: block;
+    color: var(--color-text);
+    font-size: 0.76rem;
+    font-weight: 690;
+  }
+  
+  .assessment-builder-progress p {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.69rem;
+    line-height: 1.45;
+  }
+  
+  .assessment-builder-progress
+  li.is-upcoming strong,
+  .assessment-builder-progress
+  li.is-upcoming p {
+    color: var(--color-text-subtle);
+  }
+  
+  .teacher-assessment-publish-card {
+    border-color: #ead7ad;
+    background:
+      linear-gradient(
+        145deg,
+        var(--color-surface),
+        var(--color-warning-soft)
+      );
+  }
+  
+  .teacher-assessment-results-card {
+    border-color: #dadaf6;
+    background:
+      linear-gradient(
+        145deg,
+        var(--color-surface),
+        var(--color-primary-softer)
+      );
+  }
+  
+  .teacher-assessment-publish-card h2,
+  .teacher-assessment-results-card h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.92rem;
+    font-weight: 710;
+  }
+  
+  .teacher-assessment-publish-card p,
+  .teacher-assessment-results-card p {
+    margin: 0.45rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessment-publish-card
+  .ui-button,
+  .teacher-assessment-results-card
+  .ui-button {
+    width: 100%;
+    margin-top: 0.9rem;
+  }
+  
+  .teacher-assessment-publication-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid
+      rgba(169, 102, 15, 0.16);
+    color: var(--color-warning);
+    font-size: 0.66rem;
+    line-height: 1.45;
+  }
+  
+  .teacher-assessment-publication-note
+  svg {
+    flex: 0 0 auto;
+    margin-top: 0.05rem;
+  }
+  
+  /* Formulário legado dentro do novo construtor */
+  
+  .teacher-assessment-builder-page
+  .teacher-question-form {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-form-field {
+    min-width: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-form-field label,
+  .teacher-assessment-builder-page
+  .teacher-alternatives-fieldset legend {
+    color: var(--color-text);
+    font-size: 0.73rem;
+    font-weight: 680;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-form-field
+  :is(input, select, textarea),
+  .teacher-assessment-builder-page
+  .teacher-alternative-editor
+  > input[type="text"] {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-form-field
+  :is(input, select) {
+    min-height: 2.8rem;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-form-field textarea {
+    min-height: 7rem;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-form-field
+  :is(input, select, textarea):focus,
+  .teacher-assessment-builder-page
+  .teacher-alternative-editor
+  > input[type="text"]:focus {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 4px
+      var(--focus-ring);
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-character-count {
+    justify-self: end;
+    color: var(--color-text-subtle);
+    font-size: 0.65rem;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-alternatives-fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-alternatives-fieldset
+  > p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-alternative-list {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-alternative-editor {
+    min-width: 0;
+    display: grid;
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-alternative-editor.is-correct {
+    border-color: #bfe0ce;
+    background: var(--color-success-soft);
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-correct-choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-text-soft);
+    font-size: 0.68rem;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-correct-choice input {
+    accent-color: var(--color-success);
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-alternative-remove {
+    min-height: 2.2rem;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #efcaca;
+    border-radius: var(--radius-sm);
+    color: var(--color-danger);
+    background: var(--color-danger-soft);
+    font-size: 0.67rem;
+    font-weight: 680;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-secondary-action {
+    min-height: 2.45rem;
+    margin-top: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-primary);
+    background: var(--color-surface);
+    font-size: 0.72rem;
+    font-weight: 680;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-primary-button {
+    min-height: 2.7rem;
+    padding: 0.65rem 0.9rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    color: white;
+    background: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 690;
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-primary-button:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+  
+  .teacher-assessment-builder-page
+  .teacher-primary-button:disabled {
+    opacity: 0.55;
+  }
+  
+  @media (max-width: 1060px) {
+    .teacher-assessment-builder-layout {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-assessment-builder-sidebar {
+      position: static;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  
+    .assessment-builder-progress {
+      grid-row: span 2;
+    }
+  }
+  
+  @media (max-width: 760px) {
+    .teacher-assessment-builder-overview,
+    .teacher-assessment-builder-sidebar {
+      grid-template-columns: 1fr;
+    }
+  
+    .assessment-builder-progress {
+      grid-row: auto;
+    }
+  
+    .teacher-assessment-builder-panel-header,
+    .teacher-assessment-question-editor-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .teacher-assessment-builder-panel-header
+    .ui-button,
+    .teacher-assessment-question-editor-header
+    .ui-button {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 560px) {
+    .assessment-builder-question-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .assessment-builder-remove-question.ui-button {
+      width: 100%;
+    }
+  
+    .assessment-builder-alternatives li {
+      grid-template-columns:
+        auto
+        minmax(0, 1fr);
+    }
+  
+    .assessment-builder-correct-label {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  
+    .teacher-assessment-builder-page
+    .teacher-alternative-editor {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-assessment-builder-page
+    .teacher-alternative-remove {
+      width: 100%;
+    }
+  }
