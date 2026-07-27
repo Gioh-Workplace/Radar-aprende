@@ -1,326 +1,293 @@
 import {
-    useEffect,
-    useMemo,
-    useState,
-    type FormEvent,
-  } from "react";
-  import {
-    Link,
-    useParams,
-  } from "react-router";
-  
-  import { getErrorMessage } from "../lib/get-error-message";
-  import {
-    getStudentAssessment,
-    getStudentSubmissionOrNull,
-    submitStudentAssessment,
-  } from "../services/student-api";
-  import type {
-    StudentAssessmentDetails,
-    StudentSubmission,
-  } from "../types/student";
+  LoaderCircle,
+  RefreshCw,
+} from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+} from "react";
+import { useParams } from "react-router";
 
-  import { StudentQuestionFlow } from "../features/student-assessment/StudentQuestionFlow";
+import { Button } from "../components/ui/Button";
+import { Breadcrumbs } from "../components/ui/Breadcrumbs";
+import { FeedbackBanner } from "../components/ui/FeedbackBanner";
+import { PageState } from "../components/ui/PageState";
+import { StudentAssessmentResult } from "../features/student-assessment/StudentAssessmentResult";
+import { StudentQuestionFlow } from "../features/student-assessment/StudentQuestionFlow";
+import { getErrorMessage } from "../lib/get-error-message";
+import {
+  getStudentAssessment,
+  getStudentSubmissionOrNull,
+  submitStudentAssessment,
+} from "../services/student-api";
+import type {
+  StudentAssessmentDetails,
+  StudentSubmission,
+} from "../types/student";
 
-  import "../styles/student-assessment-flow.css";
-  
-  function formatScore(
-    score: number,
-  ): string {
-    return new Intl.NumberFormat(
-      "pt-BR",
-      {
-        maximumFractionDigits: 2,
-      },
-    ).format(score);
-  }
-  
-  function formatSubmissionDate(
-    value: string,
-  ): string {
-    return new Intl.DateTimeFormat(
-      "pt-BR",
-      {
-        dateStyle: "long",
-        timeStyle: "short",
-      },
-    ).format(new Date(value));
-  }
-  
-  function getResultLevel(
-    score: number,
-  ): {
-    label: string;
-    className: string;
-    message: string;
-  } {
-    if (score >= 70) {
-      return {
-        label: "Bom desempenho",
-        className: "is-consolidated",
-        message:
-          "Você demonstrou domínio da maior parte das habilidades avaliadas.",
-      };
-    }
-  
-    if (score >= 50) {
-      return {
-        label: "Em desenvolvimento",
-        className: "is-developing",
-        message:
-          "Você está avançando, mas algumas habilidades ainda precisam de prática.",
-      };
-    }
-  
-    return {
-      label: "Precisa de atenção",
-      className: "is-critical",
-      message:
-        "Revise os conteúdos avaliados e peça orientação ao professor.",
-    };
-  }
-  
-  export function StudentAssessmentPage() {
-    const { assessmentId } = useParams<{
-      assessmentId: string;
-    }>();
-  
-    const [assessment, setAssessment] =
-      useState<StudentAssessmentDetails | null>(
-        null,
-      );
-  
-    const [submission, setSubmission] =
-      useState<StudentSubmission | null>(
-        null,
-      );
-  
-    const [
-      selectedAnswers,
-      setSelectedAnswers,
-    ] = useState<Record<string, string>>(
-      {},
+import "../styles/student-assessment-flow.css";
+import "../styles/student-assessment-result.css";
+
+export function StudentAssessmentPage() {
+  const { assessmentId } = useParams<{
+    assessmentId: string;
+  }>();
+
+  const [assessment, setAssessment] =
+    useState<StudentAssessmentDetails | null>(
+      null,
     );
-  
-    const [isLoading, setIsLoading] =
-      useState(true);
-  
-    const [isSubmitting, setIsSubmitting] =
-      useState(false);
-  
-    const [error, setError] =
-      useState<string | null>(null);
-  
-    const [submissionError, setSubmissionError] =
-      useState<string | null>(null);
-  
-    const [reloadKey, setReloadKey] =
-      useState(0);
-  
-    useEffect(() => {
-      let isCancelled = false;
-  
-      async function loadAssessment() {
-        if (!assessmentId) {
-          setError(
-            "O identificador da avaliação não foi informado.",
-          );
-          setIsLoading(false);
+
+  const [submission, setSubmission] =
+    useState<StudentSubmission | null>(
+      null,
+    );
+
+  const [
+    selectedAnswers,
+    setSelectedAnswers,
+  ] = useState<Record<string, string>>(
+    {},
+  );
+
+  const [isLoading, setIsLoading] =
+    useState(true);
+
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
+  const [
+    submissionError,
+    setSubmissionError,
+  ] = useState<string | null>(null);
+
+  const [reloadKey, setReloadKey] =
+    useState(0);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadAssessment() {
+      if (!assessmentId) {
+        setError(
+          "O identificador da avaliação não foi informado.",
+        );
+
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+      setSubmissionError(null);
+      setSelectedAnswers({});
+
+      try {
+        const [
+          assessmentData,
+          submissionData,
+        ] = await Promise.all([
+          getStudentAssessment(
+            assessmentId,
+          ),
+          getStudentSubmissionOrNull(
+            assessmentId,
+          ),
+        ]);
+
+        if (isCancelled) {
           return;
         }
-  
-        setIsLoading(true);
-        setError(null);
-  
-        try {
-          const [
-            assessmentData,
-            submissionData,
-          ] = await Promise.all([
-            getStudentAssessment(
-              assessmentId,
-            ),
-            getStudentSubmissionOrNull(
-              assessmentId,
-            ),
-          ]);
-  
-          if (!isCancelled) {
-            setAssessment(assessmentData);
-            setSubmission(submissionData);
-          }
-        } catch (caughtError) {
-          if (isCancelled) {
-            return;
-          }
-  
-          setError(
-            getErrorMessage(
-              caughtError,
-              "Não foi possível carregar a avaliação.",
-            ),
-          );
-        } finally {
-          if (!isCancelled) {
-            setIsLoading(false);
-          }
-        }
-      }
-  
-      void loadAssessment();
-  
-      return () => {
-        isCancelled = true;
-      };
-    }, [
-      assessmentId,
-      reloadKey,
-    ]);
-  
-    const answeredQuestionCount =
-      useMemo(
-        () =>
-          Object.values(
-            selectedAnswers,
-          ).filter(Boolean).length,
-        [selectedAnswers],
-      );
-  
-    function selectAlternative(
-      questionId: string,
-      alternativeId: string,
-    ) {
-      setSelectedAnswers(
-        (currentAnswers) => ({
-          ...currentAnswers,
-          [questionId]: alternativeId,
-        }),
-      );
-    }
-  
-    async function handleSubmit(
-      event: FormEvent<HTMLFormElement>,
-    ) {
-      event.preventDefault();
-  
-      if (
-        !assessmentId ||
-        !assessment
-      ) {
-        return;
-      }
-  
-      if (
-        answeredQuestionCount !==
-        assessment.questions.length
-      ) {
-        setSubmissionError(
-          "Responda todas as questões antes de enviar.",
+
+        setAssessment(
+          assessmentData,
         );
-  
-        return;
-      }
-  
-      const shouldSubmit = window.confirm(
-        "Enviar esta avaliação?\n\nDepois do envio, as respostas não poderão ser alteradas.",
-      );
-  
-      if (!shouldSubmit) {
-        return;
-      }
-  
-      setIsSubmitting(true);
-      setSubmissionError(null);
-  
-      try {
-        const createdSubmission =
-          await submitStudentAssessment(
-            assessmentId,
-            {
-              answers:
-                assessment.questions.map(
-                  (question) => ({
-                    questionId:
-                      question.id,
-  
-                    selectedAlternativeId:
-                      selectedAnswers[
-                        question.id
-                      ],
-                  }),
-                ),
-            },
-          );
-  
-        setSubmission(createdSubmission);
-  
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
+
+        setSubmission(
+          submissionData,
+        );
       } catch (caughtError) {
-        setSubmissionError(
+        if (isCancelled) {
+          return;
+        }
+
+        setAssessment(null);
+
+        setError(
           getErrorMessage(
             caughtError,
-            "Não foi possível enviar a avaliação.",
+            "Não foi possível carregar a avaliação.",
           ),
         );
       } finally {
-        setIsSubmitting(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     }
-  
-    if (isLoading) {
-      return (
-        <>
-          <Link
-            to="/aluno"
-            className="student-back-link"
-          >
-            ← Voltar para avaliações
-          </Link>
-  
-          <section className="student-feedback">
-            <strong>
-              Carregando avaliação...
-            </strong>
-  
-            <p>
-              Estamos preparando suas questões.
-            </p>
-          </section>
-        </>
-      );
+
+    void loadAssessment();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    assessmentId,
+    reloadKey,
+  ]);
+
+  const answeredQuestionCount =
+    useMemo(
+      () =>
+        Object.values(
+          selectedAnswers,
+        ).filter(Boolean).length,
+      [selectedAnswers],
+    );
+
+  function selectAlternative(
+    questionId: string,
+    alternativeId: string,
+  ) {
+    setSelectedAnswers(
+      (currentAnswers) => ({
+        ...currentAnswers,
+        [questionId]:
+          alternativeId,
+      }),
+    );
+
+    setSubmissionError(null);
+  }
+
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+
+    if (
+      !assessmentId ||
+      !assessment
+    ) {
+      return;
     }
-  
-    if (error || !assessment) {
-      return (
-        <>
-          <Link
-            to="/aluno"
-            className="student-back-link"
-          >
-            ← Voltar para avaliações
-          </Link>
-  
-          <section
-            className="student-feedback is-error"
-            role="alert"
-          >
-            <div>
-              <strong>
-                Não foi possível abrir
-                a avaliação
-              </strong>
-  
-              <p>
-                {error ??
-                  "A avaliação não foi encontrada."}
-              </p>
-            </div>
-  
-            <button
-              type="button"
+
+    if (
+      answeredQuestionCount !==
+      assessment.questions.length
+    ) {
+      setSubmissionError(
+        "Responda todas as questões antes de enviar.",
+      );
+
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmissionError(null);
+
+    try {
+      const createdSubmission =
+        await submitStudentAssessment(
+          assessmentId,
+          {
+            answers:
+              assessment.questions.map(
+                (question) => ({
+                  questionId:
+                    question.id,
+
+                  selectedAlternativeId:
+                    selectedAnswers[
+                      question.id
+                    ],
+                }),
+              ),
+          },
+        );
+
+      setSubmission(
+        createdSubmission,
+      );
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch (caughtError) {
+      setSubmissionError(
+        getErrorMessage(
+          caughtError,
+          "Não foi possível enviar a avaliação.",
+        ),
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="student-assessment-flow-page">
+        <Breadcrumbs
+          items={[
+            {
+              label: "Minhas avaliações",
+              to: "/aluno",
+            },
+            {
+              label: "Carregando",
+            },
+          ]}
+        />
+
+        <PageState
+          icon={LoaderCircle}
+          title="Carregando avaliação"
+          description="Estamos preparando as questões e verificando seu progresso."
+          tone="primary"
+          isLoading
+        />
+      </div>
+    );
+  }
+
+  if (error || !assessment) {
+    return (
+      <div className="student-assessment-flow-page">
+        <Breadcrumbs
+          items={[
+            {
+              label: "Minhas avaliações",
+              to: "/aluno",
+            },
+            {
+              label: "Avaliação indisponível",
+            },
+          ]}
+        />
+
+        <FeedbackBanner
+          tone="error"
+          title="Não foi possível abrir a avaliação"
+          description={
+            error ??
+            "A avaliação não foi encontrada."
+          }
+          action={
+            <Button
+              variant="secondary"
+              icon={
+                <RefreshCw
+                  size={16}
+                  strokeWidth={1.9}
+                />
+              }
               onClick={() =>
                 setReloadKey(
                   (currentValue) =>
@@ -329,168 +296,37 @@ import {
               }
             >
               Tentar novamente
-            </button>
-          </section>
-        </>
-      );
-    }
-  
-    if (submission) {
-      const resultLevel =
-        getResultLevel(
-          submission.score,
-        );
-  
-      const submissionByQuestionId =
-        new Map(
-          submission.answers.map(
-            (answer) => [
-              answer.questionId,
-              answer,
-            ],
-          ),
-        );
-  
-      return (
-        <>
-          <Link
-            to="/aluno"
-            className="student-back-link"
-          >
-            ← Voltar para avaliações
-          </Link>
-  
-          <header className="student-page-header">
-            <span>Resultado da avaliação</span>
-  
-            <h1>{assessment.title}</h1>
-  
-            <p>
-              Enviada em{" "}
-              {formatSubmissionDate(
-                submission.submittedAt,
-              )}.
-            </p>
-          </header>
-  
-          <section
-            className={[
-              "student-result-summary",
-              resultLevel.className,
-            ].join(" ")}
-          >
-            <div>
-              <span>
-                {resultLevel.label}
-              </span>
-  
-              <strong>
-                {formatScore(
-                  submission.score,
-                )}
-                %
-              </strong>
-  
-              <p>
-                {resultLevel.message}
-              </p>
-            </div>
-  
-            <dl>
-              <div>
-                <dt>Acertos</dt>
-  
-                <dd>
-                  {submission.correctAnswers}
-                </dd>
-              </div>
-  
-              <div>
-                <dt>Total</dt>
-  
-                <dd>
-                  {submission.totalQuestions}
-                </dd>
-              </div>
-            </dl>
-          </section>
-  
-          <section className="student-result-list">
-            {assessment.questions.map(
-              (question, index) => {
-                const answer =
-                  submissionByQuestionId.get(
-                    question.id,
-                  );
-  
-                const selectedAlternative =
-                  question.alternatives.find(
-                    (alternative) =>
-                      alternative.id ===
-                      answer
-                        ?.selectedAlternativeId,
-                  );
-  
-                return (
-                  <article
-                    key={question.id}
-                    className={[
-                      "student-result-question",
-                      answer?.isCorrect
-                        ? "is-correct"
-                        : "is-incorrect",
-                    ].join(" ")}
-                  >
-                    <div className="student-result-question-header">
-                      <span>
-                        Questão {index + 1}
-                      </span>
-  
-                      <strong>
-                        {answer?.isCorrect
-                          ? "Correta"
-                          : "Incorreta"}
-                      </strong>
-                    </div>
-  
-                    <h2>
-                      {question.statement}
-                    </h2>
-  
-                    <p>
-                      Sua resposta:{" "}
-                      <strong>
-                        {selectedAlternative
-                          ?.text ??
-                          "Resposta indisponível"}
-                      </strong>
-                    </p>
-                  </article>
-                );
-              },
-            )}
-          </section>
-        </>
-      );
-    }
-  
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
+
+  if (submission) {
     return (
-      <StudentQuestionFlow
+      <StudentAssessmentResult
         assessment={assessment}
-        selectedAnswers={
-          selectedAnswers
-        }
-        answeredQuestionCount={
-          answeredQuestionCount
-        }
-        isSubmitting={isSubmitting}
-        submissionError={
-          submissionError
-        }
-        onSelect={
-          selectAlternative
-        }
-        onSubmit={handleSubmit}
+        submission={submission}
       />
     );
   }
+
+  return (
+    <StudentQuestionFlow
+      assessment={assessment}
+      selectedAnswers={
+        selectedAnswers
+      }
+      answeredQuestionCount={
+        answeredQuestionCount
+      }
+      isSubmitting={isSubmitting}
+      submissionError={
+        submissionError
+      }
+      onSelect={selectAlternative}
+      onSubmit={handleSubmit}
+    />
+  );
+}

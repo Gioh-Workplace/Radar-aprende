@@ -5,7 +5,7 @@ import {
     ChevronRight,
     Circle,
     ClipboardCheck,
-    Send,
+    Eye,
   } from "lucide-react";
   import {
     useMemo,
@@ -26,6 +26,7 @@ import {
   import type {
     StudentAssessmentDetails,
   } from "../../types/student";
+  import { StudentAssessmentReview } from "./StudentAssessmentReview";
   
   interface StudentQuestionFlowProps {
     assessment: StudentAssessmentDetails;
@@ -72,6 +73,9 @@ import {
       setNavigationError,
     ] = useState<string | null>(null);
   
+    const [isReviewing, setIsReviewing] =
+    useState(false);
+
     const questionCardRef =
       useRef<HTMLElement | null>(null);
   
@@ -140,10 +144,12 @@ import {
           )
         : false;
   
-    function navigateToQuestion(
-      questionIndex: number,
-    ) {
-      const safeIndex = Math.min(
+        function navigateToQuestion(
+            questionIndex: number,
+          ) {
+            setIsReviewing(false);
+          
+            const safeIndex = Math.min(
         Math.max(questionIndex, 0),
         Math.max(totalQuestions - 1, 0),
       );
@@ -208,6 +214,26 @@ import {
         );
       }
     }
+
+    function openReview() {
+        if (pendingQuestionCount > 0) {
+          openFirstPendingQuestion();
+      
+          setNavigationError(
+            "Responda todas as questões antes de abrir a revisão final.",
+          );
+      
+          return;
+        }
+      
+        setNavigationError(null);
+        setIsReviewing(true);
+      
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
   
     if (!currentQuestion) {
       return (
@@ -257,8 +283,11 @@ import {
         />
   
         <PageHeader
-          eyebrow="Avaliação diagnóstica"
-          title={assessment.title}
+        eyebrow={
+            isReviewing
+            ? "Revisão final"
+            : "Avaliação diagnóstica"
+        }          title={assessment.title}
           description={
             assessment.description ??
             "Responda cada questão com atenção e revise suas escolhas antes de enviar."
@@ -326,7 +355,29 @@ import {
             respostas antes do envio.
           </p>
         </section>
-  
+
+        {isReviewing ? (
+            <StudentAssessmentReview
+                assessment={assessment}
+                selectedAnswers={
+                selectedAnswers
+                }
+                isSubmitting={isSubmitting}
+                submissionError={
+                submissionError
+                }
+                onEditQuestion={
+                navigateToQuestion
+                }
+                onBack={() =>
+                navigateToQuestion(
+                    totalQuestions - 1,
+                )
+                }
+                onSubmit={onSubmit}
+            />
+            ) : (
+            
         <form
           className="student-assessment-flow-form"
           onSubmit={onSubmit}
@@ -541,24 +592,21 @@ import {
                     Próxima
                   </Button>
                 ) : (
-                  <Button
-                    type="submit"
+                    <Button
                     icon={
-                      <Send
+                        <Eye
                         size={17}
                         strokeWidth={1.9}
-                      />
+                        />
                     }
                     disabled={
-                      isSubmitting ||
-                      pendingQuestionCount >
-                        0
+                        isSubmitting ||
+                        pendingQuestionCount > 0
                     }
-                  >
-                    {isSubmitting
-                      ? "Enviando..."
-                      : "Enviar avaliação"}
-                  </Button>
+                    onClick={openReview}
+                    >
+                    Revisar respostas
+                    </Button>
                 )}
               </footer>
   
@@ -709,6 +757,7 @@ import {
             </aside>
           </div>
         </form>
+            )}
       </div>
     );
   }

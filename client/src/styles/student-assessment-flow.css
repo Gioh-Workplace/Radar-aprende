@@ -519,3 +519,328 @@
         repeat(5, minmax(0, 1fr));
     }
   }
+
+  /* Revisão final */
+
+.student-assessment-review {
+    min-width: 0;
+  }
+  
+  .student-assessment-review-layout {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(270px, 0.34fr);
+    align-items: start;
+    gap: 1rem;
+  }
+  
+  .student-assessment-review-main {
+    min-width: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .student-assessment-review-panel {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .student-assessment-review-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  
+  .student-assessment-review-icon {
+    width: 2.7rem;
+    height: 2.7rem;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: var(--radius-lg);
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+  }
+  
+  .student-assessment-review-header
+  > div {
+    min-width: 0;
+  }
+  
+  .student-assessment-review-header
+  div > span {
+    color: var(--color-primary);
+    font-size: 0.66rem;
+    font-weight: 730;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  
+  .student-assessment-review-header h2 {
+    margin: 0.3rem 0 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 720;
+  }
+  
+  .student-assessment-review-header p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+  
+  .student-assessment-review-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.1rem;
+  }
+  
+  .student-assessment-review-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .student-assessment-review-card
+  > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .student-assessment-review-card
+  header > div {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  
+  .student-assessment-review-card
+  header div > span {
+    color: var(--color-primary);
+    font-size: 0.66rem;
+    font-weight: 720;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+  
+  .student-assessment-review-card
+  .ui-button {
+    min-height: 2.2rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.67rem;
+  }
+  
+  .student-assessment-review-card h3 {
+    margin: 0.8rem 0 0;
+    color: var(--color-text);
+    font-size: 0.82rem;
+    font-weight: 680;
+    line-height: 1.5;
+  }
+  
+  .student-assessment-review-answer {
+    min-width: 0;
+    display: grid;
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.8rem;
+    padding: 0.7rem;
+    border-radius: var(--radius-md);
+    color: var(--color-success);
+    background: var(--color-success-soft);
+  }
+  
+  .student-assessment-review-answer
+  > span {
+    width: 1.9rem;
+    height: 1.9rem;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-sm);
+    background: rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
+    font-size: 0.68rem;
+    font-weight: 750;
+  }
+  
+  .student-assessment-review-answer
+  > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  
+  .student-assessment-review-answer
+  small {
+    color: var(--color-text-subtle);
+    font-size: 0.61rem;
+    font-weight: 630;
+  }
+  
+  .student-assessment-review-answer
+  strong {
+    color: var(--color-text);
+    font-size: 0.72rem;
+    font-weight: 680;
+    line-height: 1.45;
+  }
+  
+  .student-assessment-review-sidebar {
+    position: sticky;
+    top: 6.5rem;
+  }
+  
+  .student-assessment-review-confirmation {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1.15rem;
+    border: 1px solid #b8ddca;
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(
+        145deg,
+        var(--color-surface),
+        var(--color-success-soft)
+      );
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .student-assessment-review-confirmation
+  > svg {
+    color: var(--color-success);
+  }
+  
+  .student-assessment-review-confirmation
+  div > span {
+    color: var(--color-success);
+    font-size: 0.65rem;
+    font-weight: 720;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+  }
+  
+  .student-assessment-review-confirmation
+  h2 {
+    margin: 0.3rem 0 0;
+    color: var(--color-text);
+    font-size: 0.94rem;
+    font-weight: 710;
+    line-height: 1.4;
+  }
+  
+  .student-assessment-review-confirmation
+  p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.7rem;
+    line-height: 1.5;
+  }
+  
+  .student-assessment-review-confirmation
+  ul {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .student-assessment-review-confirmation
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    color: var(--color-text-soft);
+    font-size: 0.68rem;
+    line-height: 1.45;
+  }
+  
+  .student-assessment-review-confirmation
+  li svg {
+    flex: 0 0 auto;
+    margin-top: 0.05rem;
+    color: var(--color-success);
+  }
+  
+  .student-assessment-review-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    padding: 0.7rem;
+    border-radius: var(--radius-md);
+    color: var(--color-warning);
+    background: var(--color-warning-soft);
+    font-size: 0.67rem;
+    line-height: 1.45;
+  }
+  
+  .student-assessment-review-warning
+  svg {
+    flex: 0 0 auto;
+    margin-top: 0.05rem;
+  }
+  
+  .student-assessment-review-confirmation
+  .ui-button {
+    width: 100%;
+  }
+  
+  @media (max-width: 920px) {
+    .student-assessment-review-layout {
+      grid-template-columns: 1fr;
+    }
+  
+    .student-assessment-review-sidebar {
+      position: static;
+      grid-row: 1;
+    }
+  }
+  
+  @media (max-width: 520px) {
+    .student-assessment-review-panel {
+      padding: 1rem;
+    }
+  
+    .student-assessment-review-card
+    > header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .student-assessment-review-card
+    .ui-button {
+      width: 100%;
+    }
+  
+    .student-assessment-review-answer {
+      grid-template-columns:
+        auto
+        minmax(0, 1fr);
+    }
+  
+    .student-assessment-review-answer
+    > svg {
+      grid-column: 1 / -1;
+      justify-self: end;
+    }
+  }

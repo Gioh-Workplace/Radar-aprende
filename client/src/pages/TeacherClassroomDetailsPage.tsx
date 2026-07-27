@@ -1,5 +1,4 @@
 import {
-  Archive,
   BookOpenText,
   CalendarDays,
   CheckCircle2,
