@@ -2279,3 +2279,14 @@
       margin-left: 0;
     }
   }
+
+  .teacher-student-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .teacher-student-table {
+    min-width: 760px;
+  }
