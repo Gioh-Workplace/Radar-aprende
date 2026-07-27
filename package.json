@@ -1,0 +1,18 @@
+{
+    "name": "radar-aprende",
+    "version": "1.0.0",
+    "private": true,
+    "engines": {
+        "node": "22.x",
+        "npm": "10.x"
+    },
+    "scripts": {
+        "dev": "concurrently --kill-others-on-fail --names BACKEND,FRONTEND --prefix-colors blue,magenta \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+        "dev:backend": "npm --prefix server run dev",
+        "dev:frontend": "npm --prefix client run dev",
+        "check": "npm --prefix server run quality && npm --prefix client run check"
+    },
+    "devDependencies": {
+        "concurrently": "^10.0.4"
+    }
+}
