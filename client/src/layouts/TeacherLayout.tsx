@@ -66,6 +66,13 @@ import {
   
     return (
       <div className="teacher-shell">
+        <a
+          href="#teacher-main-content"
+          className="app-skip-link"
+        >
+          Ir para o conteúdo principal
+        </a>
+    
         <aside className="teacher-sidebar">
           <div className="teacher-sidebar-header">
             <NavLink
@@ -157,7 +164,11 @@ import {
           </div>
         </aside>
   
-        <main className="teacher-content">
+        <main
+          id="teacher-main-content"
+          className="teacher-content"
+          tabIndex={-1}
+        >
           <Outlet />
         </main>
       </div>

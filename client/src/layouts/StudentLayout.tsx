@@ -33,6 +33,13 @@ import {
   
     return (
       <div className="student-shell">
+        <a
+          href="#student-main-content"
+          className="app-skip-link"
+        >
+          Ir para o conteúdo principal
+        </a>
+    
         <header className="student-topbar">
           <NavLink
             to="/aluno"
@@ -104,7 +111,11 @@ import {
           </div>
         </header>
   
-        <main className="student-content">
+        <main
+          id="student-main-content"
+          className="student-content"
+          tabIndex={-1}
+        >
           <Outlet />
         </main>
       </div>
