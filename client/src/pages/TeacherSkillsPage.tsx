@@ -1,13 +1,29 @@
 import {
+  AlignLeft,
+  BookOpenText,
+  FilterX,
+  LoaderCircle,
+  Plus,
+  RefreshCw,
+  SearchX,
+  Target,
+  X,
+} from "lucide-react";
+import {
   useDeferredValue,
   useEffect,
   useMemo,
   useState,
 } from "react";
 
-import { DataSearch } from "../components/DataSearch";
 import { SkillCreationForm } from "../components/SkillCreationForm";
-import { TeacherPageHeader } from "../components/TeacherPageHeader";
+import { Button } from "../components/ui/Button";
+import { FeedbackBanner } from "../components/ui/FeedbackBanner";
+import { PageHeader } from "../components/ui/PageHeader";
+import { PageState } from "../components/ui/PageState";
+import { SearchField } from "../components/ui/SearchField";
+import { StatCard } from "../components/ui/StatCard";
+import { StatusBadge } from "../components/ui/StatusBadge";
 import { getErrorMessage } from "../lib/get-error-message";
 import { normalizeSearch } from "../lib/normalize-search";
 import {
@@ -18,6 +34,8 @@ import type {
   CreateTeacherSkillInput,
   TeacherSkill,
 } from "../types/teacher";
+
+import "../styles/teacher-skills.css";
 
 function sortSkills(
   skills: TeacherSkill[],
@@ -42,6 +60,14 @@ function sortSkills(
   );
 }
 
+function getSkillCountLabel(
+  count: number,
+): string {
+  return count === 1
+    ? "1 habilidade"
+    : `${count} habilidades`;
+}
+
 export function TeacherSkillsPage() {
   const [skills, setSkills] =
     useState<TeacherSkill[]>([]);
@@ -52,11 +78,18 @@ export function TeacherSkillsPage() {
   const [error, setError] =
     useState<string | null>(null);
 
-  const [managementSuccess, setManagementSuccess] =
-    useState<string | null>(null);
+  const [
+    managementSuccess,
+    setManagementSuccess,
+  ] = useState<string | null>(null);
 
-  const [managementError, setManagementError] =
-    useState<string | null>(null);
+  const [
+    managementError,
+    setManagementError,
+  ] = useState<string | null>(null);
+
+  const [isCreateOpen, setIsCreateOpen] =
+    useState(false);
 
   const [searchTerm, setSearchTerm] =
     useState("");
@@ -82,7 +115,9 @@ export function TeacherSkillsPage() {
           await getTeacherSkills();
 
         if (!isCancelled) {
-          setSkills(sortSkills(skillList));
+          setSkills(
+            sortSkills(skillList),
+          );
         }
       } catch (caughtError) {
         if (isCancelled) {
@@ -114,52 +149,81 @@ export function TeacherSkillsPage() {
       Array.from(
         new Set(
           skills.map(
-            (skill) => skill.subject,
+            (skill) =>
+              skill.subject,
           ),
         ),
-      ).sort((firstSubject, secondSubject) =>
-        firstSubject.localeCompare(
+      ).sort(
+        (
+          firstSubject,
           secondSubject,
-          "pt-BR",
-        ),
+        ) =>
+          firstSubject.localeCompare(
+            secondSubject,
+            "pt-BR",
+          ),
       ),
     [skills],
   );
 
-  const filteredSkills = useMemo(() => {
-    const normalizedTerm =
-      normalizeSearch(deferredSearchTerm);
-
-    return skills.filter((skill) => {
-      if (
-        subjectFilter &&
-        skill.subject !== subjectFilter
-      ) {
-        return false;
-      }
-
-      if (!normalizedTerm) {
-        return true;
-      }
-
-      const searchableContent =
+  const filteredSkills =
+    useMemo(() => {
+      const normalizedTerm =
         normalizeSearch(
-          [
-            skill.name,
-            skill.subject,
-            skill.description,
-          ].join(" "),
+          deferredSearchTerm,
         );
 
-      return searchableContent.includes(
-        normalizedTerm,
+      return skills.filter(
+        (skill) => {
+          if (
+            subjectFilter &&
+            skill.subject !==
+              subjectFilter
+          ) {
+            return false;
+          }
+
+          if (!normalizedTerm) {
+            return true;
+          }
+
+          const searchableContent =
+            normalizeSearch(
+              [
+                skill.name,
+                skill.subject,
+                skill.description,
+              ].join(" "),
+            );
+
+          return searchableContent.includes(
+            normalizedTerm,
+          );
+        },
       );
-    });
-  }, [
-    skills,
-    deferredSearchTerm,
-    subjectFilter,
-  ]);
+    }, [
+      skills,
+      deferredSearchTerm,
+      subjectFilter,
+    ]);
+
+  const describedSkillCount =
+    useMemo(
+      () =>
+        skills.filter(
+          (skill) =>
+            Boolean(
+              skill.description?.trim(),
+            ),
+        ).length,
+      [skills],
+    );
+
+  const hasActiveFilters =
+    Boolean(
+      searchTerm ||
+      subjectFilter,
+    );
 
   async function handleCreateSkill(
     input: CreateTeacherSkillInput,
@@ -169,14 +233,21 @@ export function TeacherSkillsPage() {
 
     try {
       const createdSkill =
-        await createTeacherSkill(input);
+        await createTeacherSkill(
+          input,
+        );
 
-      setSkills((currentSkills) =>
-        sortSkills([
-          ...currentSkills,
-          createdSkill,
-        ]),
+      setSkills(
+        (currentSkills) =>
+          sortSkills([
+            ...currentSkills,
+            createdSkill,
+          ]),
       );
+
+      setSearchTerm("");
+      setSubjectFilter("");
+      setIsCreateOpen(false);
 
       setManagementSuccess(
         `${createdSkill.name} foi cadastrada com sucesso.`,
@@ -200,224 +271,363 @@ export function TeacherSkillsPage() {
     setSubjectFilter("");
   }
 
+  function toggleCreationForm() {
+    setIsCreateOpen(
+      (currentValue) =>
+        !currentValue,
+    );
+
+    setManagementError(null);
+  }
+
   return (
-    <>
-      <TeacherPageHeader
+    <div className="teacher-skills-page">
+      <PageHeader
         eyebrow="Planejamento pedagógico"
         title="Habilidades"
-        description="Consulte e organize as habilidades utilizadas para diagnosticar a aprendizagem."
+        description="Organize os objetivos de aprendizagem utilizados nas questões e avaliações diagnósticas."
+        actions={
+          <Button
+            variant={
+              isCreateOpen
+                ? "secondary"
+                : "primary"
+            }
+            icon={
+              isCreateOpen ? (
+                <X
+                  size={17}
+                  strokeWidth={2}
+                />
+              ) : (
+                <Plus
+                  size={17}
+                  strokeWidth={2}
+                />
+              )
+            }
+            onClick={
+              toggleCreationForm
+            }
+          >
+            {isCreateOpen
+              ? "Fechar formulário"
+              : "Nova habilidade"}
+          </Button>
+        }
       />
 
       {managementSuccess && (
-        <div
-          className="teacher-inline-feedback is-success"
-          role="status"
-        >
-          {managementSuccess}
-        </div>
+        <FeedbackBanner
+          tone="success"
+          title="Habilidade cadastrada"
+          description={
+            managementSuccess
+          }
+        />
       )}
 
       {managementError && (
-        <div
-          className="teacher-inline-feedback is-error"
-          role="alert"
-        >
-          {managementError}
-        </div>
+        <FeedbackBanner
+          tone="error"
+          title="Não foi possível cadastrar a habilidade"
+          description={
+            managementError
+          }
+        />
       )}
 
-      <section className="teacher-panel">
-        <div className="teacher-panel-header">
-          <h2>Cadastrar habilidade</h2>
-
-          <p>
-            Registre uma habilidade que poderá
-            ser vinculada às questões das
-            avaliações diagnósticas.
-          </p>
-        </div>
-
-        <SkillCreationForm
-          onSubmit={handleCreateSkill}
-        />
-      </section>
-
-      {isLoading && (
-        <section
-          className="teacher-feedback"
-          aria-live="polite"
-        >
-          <div>
-            <strong>
-              Carregando habilidades...
-            </strong>
+      {isCreateOpen && (
+        <section className="teacher-skills-creation">
+          <div className="teacher-skills-creation-header">
+            <h2>Nova habilidade</h2>
 
             <p>
-              Estamos consultando o catálogo
-              pedagógico.
+              Cadastre um objetivo de
+              aprendizagem que poderá ser
+              vinculado às questões das
+              avaliações diagnósticas.
             </p>
           </div>
-        </section>
-      )}
 
-      {!isLoading && error && (
-        <section
-          className="teacher-feedback is-error"
-          role="alert"
-        >
-          <div>
-            <strong>
-              Não foi possível carregar
-              as habilidades
-            </strong>
-
-            <p>{error}</p>
-          </div>
-
-          <button
-            type="button"
-            className="teacher-retry-button"
-            onClick={() =>
-              setReloadKey(
-                (currentValue) =>
-                  currentValue + 1,
-              )
+          <SkillCreationForm
+            onSubmit={
+              handleCreateSkill
             }
-          >
-            Tentar novamente
-          </button>
+            onCancel={() =>
+              setIsCreateOpen(false)
+            }
+          />
         </section>
       )}
 
       {!isLoading &&
         !error &&
         skills.length > 0 && (
-          <>
-            <DataSearch
+          <section
+            className="teacher-skills-overview"
+            aria-label="Resumo das habilidades"
+          >
+            <StatCard
+              label="Habilidades"
+              value={skills.length}
+              description="Objetivos cadastrados"
+              icon={Target}
+              tone="primary"
+            />
+
+            <StatCard
+              label="Disciplinas"
+              value={subjects.length}
+              description="Áreas representadas"
+              icon={BookOpenText}
+              tone="teal"
+            />
+
+            <StatCard
+              label="Com descrição"
+              value={
+                describedSkillCount
+              }
+              description="Objetivos detalhados"
+              icon={AlignLeft}
+              tone="neutral"
+            />
+          </section>
+        )}
+
+      {isLoading && (
+        <PageState
+          icon={LoaderCircle}
+          title="Carregando habilidades"
+          description="Estamos consultando o catálogo pedagógico do RadarAprende."
+          tone="primary"
+          isLoading
+        />
+      )}
+
+      {!isLoading && error && (
+        <FeedbackBanner
+          tone="error"
+          title="Não foi possível carregar as habilidades"
+          description={error}
+          action={
+            <Button
+              variant="secondary"
+              icon={
+                <RefreshCw
+                  size={16}
+                  strokeWidth={1.9}
+                />
+              }
+              onClick={() =>
+                setReloadKey(
+                  (currentValue) =>
+                    currentValue + 1,
+                )
+              }
+            >
+              Tentar novamente
+            </Button>
+          }
+        />
+      )}
+
+      {!isLoading &&
+        !error &&
+        skills.length > 0 && (
+          <section className="teacher-skills-toolbar">
+            <SearchField
+              id="skill-search"
               value={searchTerm}
               onChange={setSearchTerm}
               label="Pesquisar habilidades"
               placeholder="Buscar por nome, disciplina ou descrição..."
-              resultCount={filteredSkills.length}
-              totalCount={skills.length}
             />
 
-            <div className="teacher-filter-row">
-              <div className="teacher-filter-control">
-                <label htmlFor="skill-subject-filter">
-                  Filtrar por disciplina
-                </label>
+            <div className="teacher-skills-filter">
+              <label htmlFor="skill-subject-filter">
+                Disciplina
+              </label>
 
-                <select
-                  id="skill-subject-filter"
-                  value={subjectFilter}
-                  onChange={(event) =>
-                    setSubjectFilter(
-                      event.target.value,
-                    )
-                  }
-                >
-                  <option value="">
-                    Todas as disciplinas
-                  </option>
+              <select
+                id="skill-subject-filter"
+                value={subjectFilter}
+                onChange={(event) =>
+                  setSubjectFilter(
+                    event.target.value,
+                  )
+                }
+              >
+                <option value="">
+                  Todas as disciplinas
+                </option>
 
-                  {subjects.map((subject) => (
+                {subjects.map(
+                  (subject) => (
                     <option
                       key={subject}
                       value={subject}
                     >
                       {subject}
                     </option>
-                  ))}
-                </select>
-              </div>
+                  ),
+                )}
+              </select>
+            </div>
 
-              {(searchTerm ||
-                subjectFilter) && (
-                <button
-                  type="button"
-                  className="teacher-secondary-action"
+            <div className="teacher-skills-toolbar-action">
+              <span
+                className="teacher-skills-result-count"
+                aria-live="polite"
+              >
+                {hasActiveFilters
+                  ? `${filteredSkills.length} de ${skills.length}`
+                  : getSkillCountLabel(
+                      skills.length,
+                    )}
+              </span>
+
+              {hasActiveFilters && (
+                <Button
+                  variant="secondary"
+                  icon={
+                    <FilterX
+                      size={16}
+                      strokeWidth={1.9}
+                    />
+                  }
                   onClick={clearFilters}
                 >
                   Limpar filtros
-                </button>
+                </Button>
               )}
             </div>
-          </>
+          </section>
         )}
 
       {!isLoading &&
         !error &&
         skills.length === 0 && (
-          <section className="teacher-empty-state">
-            <h2>
-              Nenhuma habilidade cadastrada
-            </h2>
-
-            <p>
-              Use o formulário acima para
-              cadastrar a primeira habilidade.
-            </p>
-          </section>
+          <PageState
+            icon={Target}
+            title="Nenhuma habilidade cadastrada"
+            description="Cadastre a primeira habilidade para começar a organizar os objetivos das avaliações."
+            tone="primary"
+            action={
+              <Button
+                icon={
+                  <Plus
+                    size={16}
+                    strokeWidth={2}
+                  />
+                }
+                onClick={() =>
+                  setIsCreateOpen(true)
+                }
+              >
+                Nova habilidade
+              </Button>
+            }
+          />
         )}
 
       {!isLoading &&
         !error &&
         skills.length > 0 &&
         filteredSkills.length === 0 && (
-          <section className="teacher-empty-state">
-            <h2>
-              Nenhuma habilidade encontrada
-            </h2>
-
-            <p>
-              Não encontramos habilidades
-              correspondentes aos filtros
-              informados.
-            </p>
-
-            <button
-              type="button"
-              className="teacher-empty-action"
-              onClick={clearFilters}
-            >
-              Limpar filtros
-            </button>
-          </section>
+          <PageState
+            icon={SearchX}
+            title="Nenhuma habilidade corresponde aos filtros"
+            description="Tente outro termo de pesquisa ou selecione uma disciplina diferente."
+            action={
+              <Button
+                variant="secondary"
+                icon={
+                  <FilterX
+                    size={16}
+                    strokeWidth={1.9}
+                  />
+                }
+                onClick={clearFilters}
+              >
+                Limpar filtros
+              </Button>
+            }
+          />
         )}
 
       {!isLoading &&
         !error &&
         filteredSkills.length > 0 && (
           <section
-            className="teacher-skill-grid"
+            className="teacher-skills-grid"
             aria-label="Habilidades cadastradas"
           >
-            {filteredSkills.map((skill) => (
-              <article
-                key={skill.id}
-                className="teacher-skill-card"
-              >
-                <div className="teacher-skill-card-header">
-                  <span className="teacher-skill-subject">
-                    {skill.subject}
-                  </span>
+            {filteredSkills.map(
+              (skill) => {
+                const hasDescription =
+                  Boolean(
+                    skill.description?.trim(),
+                  );
 
-                  <span className="teacher-status-badge">
-                    Ativa
-                  </span>
-                </div>
+                return (
+                  <article
+                    key={skill.id}
+                    className="teacher-skills-card"
+                  >
+                    <div className="teacher-skills-card-top">
+                      <span className="teacher-skills-subject">
+                        {skill.subject}
+                      </span>
 
-                <h2>{skill.name}</h2>
+                      <StatusBadge
+                        tone={
+                          skill.active
+                            ? "success"
+                            : "neutral"
+                        }
+                      >
+                        {skill.active
+                          ? "Ativa"
+                          : "Inativa"}
+                      </StatusBadge>
+                    </div>
 
-                <p>
-                  {skill.description ??
-                    "Nenhuma descrição informada."}
-                </p>
-              </article>
-            ))}
+                    <h2>{skill.name}</h2>
+
+                    <p
+                      className={[
+                        "teacher-skills-description",
+                        hasDescription
+                          ? ""
+                          : "is-empty",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      {skill.description ??
+                        "Nenhuma descrição informada."}
+                    </p>
+
+                    <footer className="teacher-skills-card-footer">
+                      <Target
+                        size={15}
+                        strokeWidth={1.9}
+                        aria-hidden="true"
+                      />
+
+                      <span>
+                        Disponível para questões
+                        diagnósticas
+                      </span>
+                    </footer>
+                  </article>
+                );
+              },
+            )}
           </section>
         )}
-    </>
+    </div>
   );
 }
