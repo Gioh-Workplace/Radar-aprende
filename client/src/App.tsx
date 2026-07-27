@@ -7,6 +7,7 @@ import {
 import "./App.css";
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { RouteAccessibility } from "./components/RouteAccessibility";
 import { useAuth } from "./hooks/use-auth";
 import { StudentLayout } from "./layouts/StudentLayout";
 import { TeacherLayout } from "./layouts/TeacherLayout";
@@ -59,7 +60,10 @@ function HomeRedirect() {
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <RouteAccessibility />
+
+      <Routes>
       <Route
         path="/"
         element={<HomeRedirect />}
@@ -163,6 +167,7 @@ export default function App() {
         path="*"
         element={<NotFoundPage />}
       />
-    </Routes>
+      </Routes>
+    </>
   );
 }

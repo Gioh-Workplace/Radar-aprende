@@ -14,7 +14,6 @@ import {
 import { BrandMark } from "../components/ui/BrandMark";
 import { useAuth } from "../hooks/use-auth";
 
-import "./TeacherLayout.css";
 import "../styles/teacher-shell.css";
 
 interface NavigationItem {

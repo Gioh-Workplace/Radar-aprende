@@ -10,7 +10,6 @@ import {
 import { BrandMark } from "../components/ui/BrandMark";
 import { useAuth } from "../hooks/use-auth";
 
-import "./StudentLayout.css";
 import "../styles/student-shell.css";
 
 function getInitials(
