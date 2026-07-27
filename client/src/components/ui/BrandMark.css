@@ -1,0 +1,120 @@
+.radar-brand {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .radar-brand-symbol {
+    position: relative;
+    width: 2.65rem;
+    height: 2.65rem;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border-radius: 50%;
+    background:
+      linear-gradient(
+        145deg,
+        #7272ec,
+        var(--color-primary)
+      );
+    box-shadow:
+      0 8px 20px
+      rgba(91, 91, 214, 0.24);
+  }
+  
+  .radar-brand-symbol::before,
+  .radar-brand-symbol::after {
+    position: absolute;
+    content: "";
+    border: 1px solid
+      rgba(255, 255, 255, 0.48);
+    border-radius: 50%;
+  }
+  
+  .radar-brand-symbol::before {
+    inset: 0.48rem;
+  }
+  
+  .radar-brand-symbol::after {
+    inset: 0.9rem;
+  }
+  
+  .radar-brand-sweep {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    width: 1rem;
+    height: 2px;
+    border-radius: var(--radius-pill);
+    background: white;
+    transform:
+      translateY(-50%)
+      rotate(-38deg);
+    transform-origin: left center;
+  }
+  
+  .radar-brand-dot {
+    position: absolute;
+    top: 0.64rem;
+    right: 0.64rem;
+    z-index: 2;
+    width: 0.34rem;
+    height: 0.34rem;
+    border: 2px solid
+      rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    background: white;
+    box-shadow:
+      0 0 0 4px
+      rgba(255, 255, 255, 0.13);
+  }
+  
+  .radar-brand-copy {
+    min-width: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  
+  .radar-brand-copy strong {
+    overflow: hidden;
+    font-size: 1.05rem;
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .radar-brand-copy > span {
+    overflow: hidden;
+    font-size: 0.7rem;
+    font-weight: 550;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .radar-brand.is-light
+  .radar-brand-copy strong {
+    color: var(--color-text);
+  }
+  
+  .radar-brand.is-light
+  .radar-brand-copy > span {
+    color: var(--color-text-soft);
+  }
+  
+  .radar-brand.is-dark
+  .radar-brand-copy strong {
+    color: var(--color-sidebar-text);
+  }
+  
+  .radar-brand.is-dark
+  .radar-brand-copy > span {
+    color: var(--color-sidebar-muted);
+  }
+  
+  .radar-brand.is-compact
+  .radar-brand-copy > span {
+    display: none;
+  }
