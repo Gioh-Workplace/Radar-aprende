@@ -23,16 +23,54 @@ import type {
     TeacherAssessmentDetails,
     TeacherAssessmentResults,
     TeacherAssessmentResultsResponse,
+    CreateTeacherClassroomInput,
+    CreateTeacherClassroomResponse,
+    TeacherClassroomListStatus
   } from "../types/teacher";
 
-export async function getTeacherClassrooms():
-Promise<TeacherClassroom[]> {
+  export async function getTeacherClassrooms(
+    status: TeacherClassroomListStatus =
+      "active",
+  ): Promise<TeacherClassroom[]> {
+    const response =
+      await apiRequest<ClassroomsResponse>(
+        `/classrooms?status=${status}`,
+      );
+  
+    return response.classrooms;
+  }
+
+export async function createTeacherClassroom(
+  input: CreateTeacherClassroomInput,
+): Promise<TeacherClassroom> {
   const response =
-    await apiRequest<ClassroomsResponse>(
+    await apiRequest<CreateTeacherClassroomResponse>(
       "/classrooms",
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      },
     );
 
-  return response.classrooms;
+  return response.classroom;
+}
+
+export async function updateTeacherClassroomStatus(
+  classroomId: string,
+  active: boolean,
+): Promise<TeacherClassroomDetails> {
+  const response =
+    await apiRequest<ClassroomMutationResponse>(
+      `/classrooms/${classroomId}/status`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          active,
+        }),
+      },
+    );
+
+  return response.classroom;
 }
 
 export async function getTeacherStudents():

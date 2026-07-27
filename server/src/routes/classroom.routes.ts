@@ -6,6 +6,7 @@ import {
     getClassroomController,
     listClassroomsController,
     removeStudentController,
+    updateClassroomStatusController,
   } from "../controllers/classroom.controller";
 import { ensureAuthenticated } from "../middlewares/auth.middleware";
 import { ensureRole } from "../middlewares/role.middleware";
@@ -31,6 +32,12 @@ classroomRouter.get(
   "/:classroomId",
   getClassroomController,
 );
+
+classroomRouter.patch(
+  "/:classroomId/status",
+  updateClassroomStatusController,
+);
+
 classroomRouter.post(
     "/:classroomId/students",
     addStudentController,

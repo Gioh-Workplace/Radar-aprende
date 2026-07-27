@@ -1,6 +1,9 @@
 import { AppError } from "../errors/app-error";
 import { ClassroomModel } from "../models/classroom.model";
-import type { CreateClassroomInput } from "../schemas/classroom.schema";
+import type { 
+  ClassroomListStatus,
+  CreateClassroomInput,
+ } from "../schemas/classroom.schema";
 import { UserModel } from "../models/user.model";
 
 
@@ -53,24 +56,40 @@ export async function createClassroom(
 
 export async function listTeacherClassrooms(
   teacherId: string,
+  status: ClassroomListStatus = "active",
 ): Promise<PublicClassroom[]> {
-  const classrooms = await ClassroomModel.find({
-    teacherId,
-    active: true,
-  }).sort({
-    createdAt: -1,
-  });
+  const activeFilter =
+    status === "all"
+      ? {}
+      : {
+          active:
+            status === "active",
+        };
 
-  return classrooms.map((classroom) => ({
-    id: String(classroom._id),
-    name: classroom.name,
-    subject: classroom.subject,
-    schoolYear: classroom.schoolYear,
-    teacherId: String(classroom.teacherId),
-    studentCount: classroom.studentIds.length,
-    active: classroom.active,
-    createdAt: classroom.createdAt,
-  }));
+  const classrooms =
+    await ClassroomModel.find({
+      teacherId,
+      ...activeFilter,
+    }).sort({
+      active: -1,
+      createdAt: -1,
+    });
+
+  return classrooms.map(
+    (classroom) => ({
+      id: String(classroom._id),
+      name: classroom.name,
+      subject: classroom.subject,
+      schoolYear: classroom.schoolYear,
+      teacherId: String(
+        classroom.teacherId,
+      ),
+      studentCount:
+        classroom.studentIds.length,
+      active: classroom.active,
+      createdAt: classroom.createdAt,
+    }),
+  );
 }
 
 export async function getTeacherClassroomById(
@@ -80,7 +99,6 @@ export async function getTeacherClassroomById(
     const classroom = await ClassroomModel.findOne({
       _id: classroomId,
       teacherId,
-      active: true,
     });
   
     if (!classroom) {
@@ -229,6 +247,35 @@ export async function getTeacherClassroomById(
         },
       },
     );
+  
+    return getTeacherClassroomById(
+      classroomId,
+      teacherId,
+    );
+  }
+
+  export async function updateClassroomStatus(
+    classroomId: string,
+    teacherId: string,
+    active: boolean,
+  ): Promise<PublicClassroomDetails> {
+    const classroom =
+      await ClassroomModel.findOne({
+        _id: classroomId,
+        teacherId,
+      });
+  
+    if (!classroom) {
+      throw new AppError(
+        404,
+        "Turma não encontrada.",
+        "CLASSROOM_NOT_FOUND",
+      );
+    }
+  
+    classroom.active = active;
+  
+    await classroom.save();
   
     return getTeacherClassroomById(
       classroomId,

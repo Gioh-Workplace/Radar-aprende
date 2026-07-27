@@ -15,6 +15,22 @@ export const createClassroomSchema = z.object({
   schoolYear: z.string().trim().min(2).max(40),
 });
 
+export const listClassroomsQuerySchema =
+  z.object({
+    status: z
+      .enum([
+        "active",
+        "archived",
+        "all",
+      ])
+      .default("active"),
+  });
+
+export const updateClassroomStatusSchema =
+  z.object({
+    active: z.boolean(),
+  });
+
 export const classroomIdParamsSchema = z.object({
   classroomId: objectIdSchema,
 });
@@ -31,3 +47,8 @@ export const addStudentToClassroomSchema = z.object({
 export type CreateClassroomInput = z.infer<
   typeof createClassroomSchema
 >;
+
+export type ClassroomListStatus =
+  z.infer<
+    typeof listClassroomsQuerySchema
+  >["status"];

@@ -8,6 +8,17 @@ export interface TeacherClassroom {
     active: boolean;
     createdAt: string;
   }
+
+  export interface CreateTeacherClassroomInput {
+    name: string;
+    subject: string;
+    schoolYear: string;
+  }
+  
+  export interface CreateTeacherClassroomResponse {
+    message: string;
+    classroom: TeacherClassroom;
+  }
   
   export interface TeacherStudent {
     id: string;
@@ -158,6 +169,11 @@ export interface TeacherClassroom {
     assessment: TeacherAssessmentDetails;
   }
 
+  export type TeacherClassroomListStatus =
+  | "active"
+  | "archived"
+  | "all";
+
   export type TeacherResultStudentStatus =
   | "SUBMITTED"
   | "PENDING";
@@ -167,6 +183,8 @@ export type SkillPerformanceLevel =
   | "DEVELOPING"
   | "CONSOLIDATED"
   | "NO_DATA";
+
+  
 
 export interface TeacherAssessmentResultSummary {
   totalStudents: number;
