@@ -1,51 +1,72 @@
-interface DataSearchProps {
+import {
+    Search,
+    X,
+  } from "lucide-react";
+  
+  interface SearchFieldProps {
+    id: string;
     value: string;
     onChange(value: string): void;
-    placeholder: string;
     label: string;
+    placeholder: string;
     resultCount?: number;
     totalCount?: number;
   }
   
-  export function DataSearch({
+  export function SearchField({
+    id,
     value,
     onChange,
-    placeholder,
     label,
+    placeholder,
     resultCount,
     totalCount,
-  }: DataSearchProps) {
-    const hasSearch = value.trim().length > 0;
+  }: SearchFieldProps) {
+    const hasSearch =
+      value.trim().length > 0;
   
     return (
-      <div className="teacher-data-search">
-        <div className="teacher-search-field">
-          <span
-            className="teacher-search-icon"
+      <div className="ui-search">
+        <label
+          htmlFor={id}
+          className="ui-search-label"
+        >
+          {label}
+        </label>
+  
+        <div className="ui-search-control">
+          <Search
+            className="ui-search-icon"
+            size={18}
+            strokeWidth={1.9}
             aria-hidden="true"
-          >
-            ⌕
-          </span>
+          />
   
           <input
-            type="search"
+            id={id}
+            type="text"
+            inputMode="search"
+            role="searchbox"
             value={value}
             onChange={(event) =>
               onChange(event.target.value)
             }
             placeholder={placeholder}
-            aria-label={label}
             autoComplete="off"
           />
   
           {hasSearch && (
             <button
               type="button"
-              className="teacher-search-clear"
+              className="ui-search-clear"
               onClick={() => onChange("")}
-              aria-label="Limpar busca"
+              aria-label="Limpar pesquisa"
             >
-              Limpar
+              <X
+                size={16}
+                strokeWidth={2}
+                aria-hidden="true"
+              />
             </button>
           )}
         </div>
@@ -53,7 +74,7 @@ interface DataSearchProps {
         {resultCount !== undefined &&
           totalCount !== undefined && (
             <span
-              className="teacher-search-result-count"
+              className="ui-search-result"
               aria-live="polite"
             >
               {hasSearch

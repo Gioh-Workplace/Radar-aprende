@@ -1,0 +1,687 @@
+.teacher-assessment-results-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .teacher-assessment-results-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  
+  .teacher-assessment-results-stats {
+    display: grid;
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+  
+  .teacher-assessment-results-panel {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .teacher-assessment-results-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .teacher-assessment-results-panel-header h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 720;
+    letter-spacing: -0.025em;
+  }
+  
+  .teacher-assessment-results-panel-header p {
+    max-width: 680px;
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessment-results-overview {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1.4fr)
+      minmax(280px, 0.6fr);
+    align-items: start;
+    gap: 1rem;
+  }
+  
+  .teacher-assessment-results-overview-main,
+  .teacher-assessment-results-overview-side {
+    min-width: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .assessment-results-priority-grid {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  
+  .assessment-results-priority-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-left-width: 4px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .assessment-results-priority-card.is-critical {
+    border-left-color: var(--color-danger);
+  }
+  
+  .assessment-results-priority-card.is-developing {
+    border-left-color: var(--color-warning);
+  }
+  
+  .assessment-results-priority-card.is-consolidated {
+    border-left-color: var(--color-success);
+  }
+  
+  .assessment-results-priority-card.is-no_data {
+    border-left-color:
+      var(--color-border-strong);
+  }
+  
+  .assessment-results-priority-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .assessment-results-priority-number {
+    color: var(--color-text-subtle);
+    font-size: 0.66rem;
+    font-weight: 720;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+  }
+  
+  .assessment-results-priority-skill {
+    display: grid;
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 0.9rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+  
+  .assessment-results-priority-skill
+  > svg {
+    color: var(--color-primary);
+  }
+  
+  .assessment-results-priority-skill
+  > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.18rem;
+  }
+  
+  .assessment-results-priority-skill
+  span {
+    color: var(--color-text-subtle);
+    font-size: 0.62rem;
+    font-weight: 620;
+  }
+  
+  .assessment-results-priority-skill
+  strong {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 0.75rem;
+    font-weight: 690;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .assessment-results-priority-score {
+    color: var(--color-primary) !important;
+    font-size: 0.93rem !important;
+    white-space: nowrap;
+  }
+  
+  .assessment-results-priority-card h3 {
+    margin: 0.9rem 0 0;
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  
+  .assessment-results-priority-card
+  > p {
+    margin: 0.4rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.72rem;
+    line-height: 1.55;
+  }
+  
+  .assessment-results-priority-actions {
+    margin-top: 0.85rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid
+      var(--color-border);
+  }
+  
+  .assessment-results-priority-actions
+  > strong {
+    color: var(--color-text);
+    font-size: 0.68rem;
+    font-weight: 690;
+  }
+  
+  .assessment-results-priority-actions ul {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0.55rem 0 0;
+    padding-left: 1.05rem;
+  }
+  
+  .assessment-results-priority-actions li {
+    color: var(--color-text-soft);
+    font-size: 0.69rem;
+    line-height: 1.45;
+  }
+  
+  .teacher-results-participation-card
+  .teacher-result-progress {
+    margin-top: 1rem;
+  }
+  
+  .teacher-results-participation-detail {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+  }
+  
+  .teacher-results-participation-detail
+  div {
+    min-width: 0;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-results-participation-detail
+  span {
+    display: block;
+    color: var(--color-text-subtle);
+    font-size: 0.64rem;
+    font-weight: 620;
+  }
+  
+  .teacher-results-participation-detail
+  strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--color-text);
+    font-size: 0.88rem;
+    font-weight: 720;
+  }
+  
+  .teacher-results-level-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+  
+  .teacher-results-level-card {
+    min-width: 0;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-results-level-card span {
+    display: block;
+    color: var(--color-text-soft);
+    font-size: 0.64rem;
+    font-weight: 620;
+  }
+  
+  .teacher-results-level-card strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 730;
+  }
+  
+  .teacher-results-level-card.is-critical {
+    background: var(--color-danger-soft);
+  }
+  
+  .teacher-results-level-card.is-developing {
+    background: var(--color-warning-soft);
+  }
+  
+  .teacher-results-level-card.is-consolidated {
+    background: var(--color-success-soft);
+  }
+  
+  .teacher-results-skill-list,
+  .teacher-results-question-list {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  
+  .teacher-results-skill-card,
+  .teacher-results-question-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-results-skill-card-header,
+  .teacher-results-question-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .teacher-results-skill-card-header
+  span,
+  .teacher-results-question-position {
+    color: var(--color-primary);
+    font-size: 0.66rem;
+    font-weight: 720;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  
+  .teacher-results-skill-card h3,
+  .teacher-results-question-card h3 {
+    margin: 0.35rem 0 0;
+    color: var(--color-text);
+    font-size: 0.87rem;
+    font-weight: 690;
+    line-height: 1.5;
+  }
+  
+  .teacher-results-skill-card
+  .teacher-result-progress,
+  .teacher-results-question-card
+  .teacher-result-progress {
+    margin-top: 0.9rem;
+  }
+  
+  .teacher-results-recommendation-section {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid
+      var(--color-border);
+  }
+  
+  .teacher-results-recommendation-section
+  > h3 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  
+  .teacher-results-recommendation-section
+  > p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-results-student-toolbar {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(190px, 240px)
+      auto;
+    align-items: end;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-results-student-filter {
+    min-width: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  
+  .teacher-results-student-filter label {
+    color: var(--color-text);
+    font-size: 0.76rem;
+    font-weight: 680;
+  }
+  
+  .teacher-results-student-filter select {
+    width: 100%;
+    min-height: 2.85rem;
+    padding:
+      0.65rem
+      2.4rem
+      0.65rem
+      0.8rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+  }
+  
+  .teacher-results-student-filter
+  select:focus {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 4px
+      var(--focus-ring);
+  }
+  
+  .teacher-results-student-count {
+    display: grid;
+    gap: 0.45rem;
+  }
+  
+  .teacher-results-student-count
+  > span {
+    color: var(--color-text-soft);
+    font-size: 0.67rem;
+    font-weight: 620;
+    text-align: right;
+  }
+  
+  .teacher-results-table-wrapper {
+    min-width: 0;
+    overflow-x: auto;
+    margin-top: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  
+  .teacher-results-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+  }
+  
+  .teacher-results-table th,
+  .teacher-results-table td {
+    padding: 0.78rem;
+    border-bottom: 1px solid
+      var(--color-border);
+    text-align: left;
+  }
+  
+  .teacher-results-table th {
+    color: var(--color-text-subtle);
+    background: var(--color-surface-soft);
+    font-size: 0.64rem;
+    font-weight: 720;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+  
+  .teacher-results-table td {
+    color: var(--color-text-soft);
+    font-size: 0.72rem;
+  }
+  
+  .teacher-results-table
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  
+  .teacher-results-table
+  tbody tr:hover {
+    background: var(--color-primary-softer);
+  }
+  
+  .teacher-results-student-name {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  
+  .teacher-results-student-avatar {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: var(--radius-sm);
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+    font-size: 0.7rem;
+    font-weight: 750;
+  }
+  
+  .teacher-results-student-name
+  strong {
+    color: var(--color-text);
+    font-size: 0.74rem;
+    font-weight: 680;
+  }
+  
+  @media (max-width: 1120px) {
+    .teacher-assessment-results-stats {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  
+    .teacher-assessment-results-overview {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-assessment-results-overview-side {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (max-width: 760px) {
+    .teacher-assessment-results-stats,
+    .teacher-assessment-results-overview-side {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-results-student-toolbar {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-results-student-count
+    > span {
+      text-align: left;
+    }
+  }
+  
+  @media (max-width: 520px) {
+    .teacher-assessment-results-panel {
+      padding: 1rem;
+    }
+  
+    .teacher-assessment-results-panel-header,
+    .teacher-results-skill-card-header,
+    .teacher-results-question-card-header,
+    .assessment-results-priority-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  
+    .assessment-results-priority-skill {
+      grid-template-columns:
+        auto
+        minmax(0, 1fr);
+    }
+  
+    .assessment-results-priority-score {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  
+    .teacher-results-participation-detail,
+    .teacher-results-level-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .teacher-results-student-card-list {
+    display: none;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  
+  .teacher-results-student-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-results-student-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .teacher-results-student-card-identity {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  
+  .teacher-results-student-card-identity
+  > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.18rem;
+  }
+  
+  .teacher-results-student-card-identity
+  strong {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 0.78rem;
+    font-weight: 690;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .teacher-results-student-card-identity
+  div > span {
+    color: var(--color-text-subtle);
+    font-size: 0.64rem;
+    line-height: 1.4;
+  }
+  
+  .teacher-results-student-card-metrics {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 1rem 0 0;
+  }
+  
+  .teacher-results-student-card-metrics
+  div {
+    min-width: 0;
+    padding: 0.7rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+  
+  .teacher-results-student-card-metrics
+  div.is-wide {
+    grid-column: 1 / -1;
+  }
+  
+  .teacher-results-student-card-metrics
+  dt {
+    color: var(--color-text-subtle);
+    font-size: 0.62rem;
+    font-weight: 650;
+  }
+  
+  .teacher-results-student-card-metrics
+  dd {
+    margin: 0.3rem 0 0;
+    color: var(--color-text);
+    font-size: 0.72rem;
+    font-weight: 680;
+    line-height: 1.45;
+  }
+  
+  @media (max-width: 760px) {
+    .teacher-results-student-count
+    .ui-button {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 680px) {
+    .teacher-results-table-wrapper {
+      display: none;
+    }
+  
+    .teacher-results-student-card-list {
+      display: grid;
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .teacher-results-student-card-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .teacher-results-student-card-header
+    > .ui-status-badge {
+      align-self: flex-start;
+    }
+  
+    .teacher-results-student-card-metrics {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-results-student-card-metrics
+    div.is-wide {
+      grid-column: auto;
+    }
+  }

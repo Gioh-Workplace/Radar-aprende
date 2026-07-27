@@ -1,0 +1,343 @@
+.teacher-skills-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .teacher-skills-overview {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+  
+  .teacher-skills-creation {
+    padding: 1.25rem;
+    border: 1px solid #dadaf6;
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(
+        135deg,
+        var(--color-surface),
+        var(--color-primary-softer)
+      );
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .teacher-skills-creation-header h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 720;
+    letter-spacing: -0.025em;
+  }
+  
+  .teacher-skills-creation-header p {
+    max-width: 640px;
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-skill-form {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.15rem;
+  }
+  
+  .teacher-skill-form-field {
+    min-width: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  
+  .teacher-skill-form-field.is-wide {
+    grid-column: 1 / -1;
+  }
+  
+  .teacher-skill-form-field label {
+    color: var(--color-text);
+    font-size: 0.73rem;
+    font-weight: 680;
+  }
+  
+  .teacher-skill-form-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .teacher-skill-form-label-row > span {
+    color: var(--color-text-subtle);
+    font-size: 0.67rem;
+    font-weight: 620;
+  }
+  
+  .teacher-skill-form-field input,
+  .teacher-skill-form-field textarea {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+  
+  .teacher-skill-form-field input {
+    min-height: 2.8rem;
+  }
+  
+  .teacher-skill-form-field textarea {
+    min-height: 7rem;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  
+  .teacher-skill-form-field
+  :is(input, textarea):focus {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 4px
+      var(--focus-ring);
+  }
+  
+  .teacher-skill-form-field
+  :is(input, textarea)::placeholder {
+    color: var(--color-text-subtle);
+  }
+  
+  .teacher-skill-form-counter {
+    justify-self: end;
+    color: var(--color-text-subtle);
+    font-size: 0.65rem;
+  }
+  
+  .teacher-skill-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.7rem;
+  }
+  
+  .teacher-skills-toolbar {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(200px, 260px)
+      auto;
+    align-items: end;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .teacher-skills-filter {
+    min-width: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  
+  .teacher-skills-filter label {
+    color: var(--color-text);
+    font-size: 0.76rem;
+    font-weight: 680;
+  }
+  
+  .teacher-skills-filter select {
+    width: 100%;
+    min-height: 2.85rem;
+    padding: 0.65rem 2.4rem 0.65rem 0.8rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+  }
+  
+  .teacher-skills-filter select:hover {
+    border-color:
+      var(--color-border-strong);
+  }
+  
+  .teacher-skills-filter select:focus {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 4px
+      var(--focus-ring);
+  }
+  
+  .teacher-skills-toolbar-action {
+    display: grid;
+    gap: 0.45rem;
+  }
+  
+  .teacher-skills-result-count {
+    color: var(--color-text-soft);
+    font-size: 0.68rem;
+    font-weight: 620;
+    text-align: right;
+    white-space: nowrap;
+  }
+  
+  .teacher-skills-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+  
+  .teacher-skills-card {
+    min-width: 0;
+    min-height: 13.5rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1.15rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
+  }
+  
+  .teacher-skills-card:hover {
+    border-color: #c7c7ee;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+  
+  .teacher-skills-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .teacher-skills-subject {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--color-primary);
+    font-size: 0.7rem;
+    font-weight: 720;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .teacher-skills-card h2 {
+    margin: 1rem 0 0;
+    color: var(--color-text);
+    font-size: 0.98rem;
+    font-weight: 720;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+  }
+  
+  .teacher-skills-description {
+    margin: 0.55rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.75rem;
+    line-height: 1.55;
+  }
+  
+  .teacher-skills-description.is-empty {
+    color: var(--color-text-subtle);
+    font-style: italic;
+  }
+  
+  .teacher-skills-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid
+      var(--color-border);
+    color: var(--color-text-subtle);
+    font-size: 0.68rem;
+    font-weight: 620;
+  }
+  
+  .teacher-skills-card-footer svg {
+    flex: 0 0 auto;
+    color: var(--color-primary);
+  }
+  
+  @media (max-width: 1180px) {
+    .teacher-skills-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .teacher-skills-overview {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  
+    .teacher-skills-toolbar {
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(190px, 240px);
+    }
+  
+    .teacher-skills-toolbar-action {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  
+  @media (max-width: 680px) {
+    .teacher-skills-overview,
+    .teacher-skills-grid,
+    .teacher-skill-form,
+    .teacher-skills-toolbar {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-skill-form-field.is-wide,
+    .teacher-skill-form-actions,
+    .teacher-skills-toolbar-action {
+      grid-column: auto;
+    }
+  
+    .teacher-skill-form-actions {
+      flex-direction: column-reverse;
+    }
+  
+    .teacher-skill-form-actions
+    .ui-button {
+      width: 100%;
+    }
+  
+    .teacher-skills-toolbar-action {
+      display: grid;
+      gap: 0.65rem;
+    }
+  
+    .teacher-skills-result-count {
+      text-align: left;
+    }
+  
+    .teacher-skills-card {
+      min-height: auto;
+    }
+  }

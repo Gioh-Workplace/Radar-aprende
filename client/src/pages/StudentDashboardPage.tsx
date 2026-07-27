@@ -1,12 +1,35 @@
 import {
+  ArrowRight,
+  BookOpenCheck,
+  CheckCircle2,
+  ClipboardList,
+  FilterX,
+  LoaderCircle,
+  PlayCircle,
+  RefreshCw,
+  SearchX,
+  Sparkles,
+} from "lucide-react";
+import {
   useDeferredValue,
   useEffect,
   useMemo,
   useState,
 } from "react";
-import { Link } from "react-router";
 
-import { DataSearch } from "../components/DataSearch";
+import {
+  Button,
+  ButtonLink,
+} from "../components/ui/Button";
+import { FeedbackBanner } from "../components/ui/FeedbackBanner";
+import { PageHeader } from "../components/ui/PageHeader";
+import { PageState } from "../components/ui/PageState";
+import { SearchField } from "../components/ui/SearchField";
+import { StatCard } from "../components/ui/StatCard";
+import {
+  StatusBadge,
+  type StatusBadgeTone,
+} from "../components/ui/StatusBadge";
 import { useAuth } from "../hooks/use-auth";
 import { getErrorMessage } from "../lib/get-error-message";
 import { normalizeSearch } from "../lib/normalize-search";
@@ -18,16 +41,39 @@ import type {
   StudentAssessmentListItem,
 } from "../types/student";
 
+import "../styles/student-dashboard.css";
+
 type StudentStatusFilter =
   | "ALL"
   | "AVAILABLE"
   | "COMPLETED";
+
+function getPublishedTimestamp(
+  value: string | null,
+): number {
+  if (!value) {
+    return 0;
+  }
+
+  const timestamp =
+    new Date(value).getTime();
+
+  return Number.isNaN(timestamp)
+    ? 0
+    : timestamp;
+}
 
 function formatPublishedDate(
   value: string | null,
 ): string {
   if (!value) {
     return "Data não informada";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Data indisponível";
   }
 
   return new Intl.DateTimeFormat(
@@ -37,7 +83,7 @@ function formatPublishedDate(
       month: "short",
       year: "numeric",
     },
-  ).format(new Date(value));
+  ).format(date);
 }
 
 function formatScore(
@@ -51,37 +97,71 @@ function formatScore(
   ).format(score);
 }
 
+function getScoreTone(
+  score: number,
+): StatusBadgeTone {
+  if (score < 50) {
+    return "danger";
+  }
+
+  if (score < 70) {
+    return "warning";
+  }
+
+  return "success";
+}
+
 function sortAssessmentItems(
   items: StudentAssessmentListItem[],
 ): StudentAssessmentListItem[] {
   return [...items].sort(
     (firstItem, secondItem) => {
-      const firstTime =
-        firstItem.assessment.publishedAt
-          ? new Date(
-              firstItem.assessment.publishedAt,
-            ).getTime()
-          : 0;
+      const firstIsCompleted =
+        firstItem.submission !== null;
 
-      const secondTime =
-        secondItem.assessment.publishedAt
-          ? new Date(
-              secondItem.assessment.publishedAt,
-            ).getTime()
-          : 0;
+      const secondIsCompleted =
+        secondItem.submission !== null;
 
-      return secondTime - firstTime;
+      if (
+        firstIsCompleted !==
+        secondIsCompleted
+      ) {
+        return firstIsCompleted
+          ? 1
+          : -1;
+      }
+
+      return (
+        getPublishedTimestamp(
+          secondItem.assessment
+            .publishedAt,
+        ) -
+        getPublishedTimestamp(
+          firstItem.assessment
+            .publishedAt,
+        )
+      );
     },
   );
+}
+
+function getAssessmentCountLabel(
+  count: number,
+): string {
+  return count === 1
+    ? "1 avaliação"
+    : `${count} avaliações`;
 }
 
 export function StudentDashboardPage() {
   const { user } = useAuth();
 
-  const [assessmentItems, setAssessmentItems] =
-    useState<StudentAssessmentListItem[]>(
-      [],
-    );
+  const [
+    assessmentItems,
+    setAssessmentItems,
+  ] = useState<
+    StudentAssessmentListItem[]
+  >([]);
 
   const [isLoading, setIsLoading] =
     useState(true);
@@ -92,8 +172,12 @@ export function StudentDashboardPage() {
   const [searchTerm, setSearchTerm] =
     useState("");
 
-  const [statusFilter, setStatusFilter] =
-    useState<StudentStatusFilter>("ALL");
+  const [
+    statusFilter,
+    setStatusFilter,
+  ] = useState<StudentStatusFilter>(
+    "ALL",
+  );
 
   const [reloadKey, setReloadKey] =
     useState(0);
@@ -112,18 +196,19 @@ export function StudentDashboardPage() {
         const assessments =
           await getStudentAssessments();
 
-        const items = await Promise.all(
-          assessments.map(
-            async (assessment) => ({
-              assessment,
+        const items =
+          await Promise.all(
+            assessments.map(
+              async (assessment) => ({
+                assessment,
 
-              submission:
-                await getStudentSubmissionOrNull(
-                  assessment.id,
-                ),
-            }),
-          ),
-        );
+                submission:
+                  await getStudentSubmissionOrNull(
+                    assessment.id,
+                  ),
+              }),
+            ),
+          );
 
         if (!isCancelled) {
           setAssessmentItems(
@@ -155,69 +240,101 @@ export function StudentDashboardPage() {
     };
   }, [reloadKey]);
 
-  const completedCount = useMemo(
-    () =>
-      assessmentItems.filter(
-        (item) =>
-          item.submission !== null,
-      ).length,
-    [assessmentItems],
-  );
+  const completedCount =
+    useMemo(
+      () =>
+        assessmentItems.filter(
+          (item) =>
+            item.submission !== null,
+        ).length,
+      [assessmentItems],
+    );
 
   const availableCount =
     assessmentItems.length -
     completedCount;
 
-  const filteredItems = useMemo(() => {
-    const normalizedTerm =
-      normalizeSearch(
-        deferredSearchTerm,
-      );
+  const completionRate =
+    assessmentItems.length > 0
+      ? Math.round(
+          (completedCount /
+            assessmentItems.length) *
+            100,
+        )
+      : 0;
 
-    return assessmentItems.filter(
-      (item) => {
-        const isCompleted =
-          item.submission !== null;
-
-        if (
-          statusFilter === "AVAILABLE" &&
-          isCompleted
-        ) {
-          return false;
-        }
-
-        if (
-          statusFilter === "COMPLETED" &&
-          !isCompleted
-        ) {
-          return false;
-        }
-
-        if (!normalizedTerm) {
-          return true;
-        }
-
-        const searchableContent =
-          normalizeSearch(
-            [
-              item.assessment.title,
-              item.assessment.description,
-              isCompleted
-                ? "respondida concluida"
-                : "disponivel pendente",
-            ].join(" "),
-          );
-
-        return searchableContent.includes(
-          normalizedTerm,
-        );
-      },
+  const nextAssessment =
+    useMemo(
+      () =>
+        assessmentItems.find(
+          (item) =>
+            item.submission === null,
+        ) ?? null,
+      [assessmentItems],
     );
-  }, [
-    assessmentItems,
-    deferredSearchTerm,
-    statusFilter,
-  ]);
+
+  const filteredItems =
+    useMemo(() => {
+      const normalizedTerm =
+        normalizeSearch(
+          deferredSearchTerm,
+        );
+
+      return assessmentItems.filter(
+        (item) => {
+          const isCompleted =
+            item.submission !== null;
+
+          if (
+            statusFilter ===
+              "AVAILABLE" &&
+            isCompleted
+          ) {
+            return false;
+          }
+
+          if (
+            statusFilter ===
+              "COMPLETED" &&
+            !isCompleted
+          ) {
+            return false;
+          }
+
+          if (!normalizedTerm) {
+            return true;
+          }
+
+          const searchableContent =
+            normalizeSearch(
+              [
+                item.assessment.title,
+                item.assessment
+                  .description,
+                isCompleted
+                  ? "respondida concluida resultado"
+                  : "disponivel pendente responder",
+                item.submission?.score ??
+                  "",
+              ].join(" "),
+            );
+
+          return searchableContent.includes(
+            normalizedTerm,
+          );
+        },
+      );
+    }, [
+      assessmentItems,
+      deferredSearchTerm,
+      statusFilter,
+    ]);
+
+  const hasActiveFilters =
+    Boolean(
+      searchTerm ||
+      statusFilter !== "ALL",
+    );
 
   function clearFilters() {
     setSearchTerm("");
@@ -225,288 +342,395 @@ export function StudentDashboardPage() {
   }
 
   return (
-    <>
-      <header className="student-page-header">
-        <span>Área do estudante</span>
+    <div className="student-dashboard-page">
+      <PageHeader
+        eyebrow="Área do estudante"
+        title={`Olá, ${
+          user?.name?.split(" ")[0] ??
+          "estudante"
+        }.`}
+        description="Veja suas avaliações, responda às atividades pendentes e acompanhe os resultados já obtidos."
+      />
 
-        <h1>
-          Olá,{" "}
-          {user?.name?.split(" ")[0] ??
-            "estudante"}.
-        </h1>
+      {!isLoading &&
+        !error &&
+        nextAssessment && (
+          <section className="student-dashboard-next-card">
+            <span
+              className="student-dashboard-next-icon"
+              aria-hidden="true"
+            >
+              <Sparkles
+                size={22}
+                strokeWidth={1.9}
+              />
+            </span>
 
-        <p>
-          Consulte as avaliações da sua turma,
-          responda às atividades pendentes e
-          acompanhe seus resultados.
-        </p>
-      </header>
+            <div className="student-dashboard-next-copy">
+              <span>
+                Próxima atividade
+              </span>
 
-      <section
-        className="student-summary-grid"
-        aria-label="Resumo das avaliações"
-      >
-        <article>
-          <span>Avaliações disponíveis</span>
-          <strong>
-            {isLoading
-              ? "…"
-              : availableCount}
-          </strong>
-        </article>
+              <h2>
+                {
+                  nextAssessment
+                    .assessment.title
+                }
+              </h2>
 
-        <article>
-          <span>Avaliações respondidas</span>
-          <strong>
-            {isLoading
-              ? "…"
-              : completedCount}
-          </strong>
-        </article>
+              <p>
+                {
+                  nextAssessment
+                    .assessment
+                    .questionCount
+                }{" "}
+                {nextAssessment
+                  .assessment
+                  .questionCount === 1
+                  ? "questão"
+                  : "questões"}{" "}
+                · publicada em{" "}
+                {formatPublishedDate(
+                  nextAssessment
+                    .assessment
+                    .publishedAt,
+                )}
+              </p>
+            </div>
 
-        <article>
-          <span>Total publicado</span>
-          <strong>
-            {isLoading
-              ? "…"
-              : assessmentItems.length}
-          </strong>
-        </article>
-      </section>
+            <ButtonLink
+              to={`/aluno/avaliacoes/${nextAssessment.assessment.id}`}
+              icon={
+                <PlayCircle
+                  size={17}
+                  strokeWidth={1.9}
+                />
+              }
+            >
+              Responder agora
+            </ButtonLink>
+          </section>
+        )}
 
-      {isLoading && (
+      {!isLoading && !error && (
         <section
-          className="student-feedback"
-          aria-live="polite"
+          className="student-dashboard-overview"
+          aria-label="Resumo das avaliações"
         >
-          <strong>
-            Carregando avaliações...
-          </strong>
+          <StatCard
+            label="Para responder"
+            value={availableCount}
+            description="Atividades pendentes"
+            icon={ClipboardList}
+            tone={
+              availableCount > 0
+                ? "warning"
+                : "neutral"
+            }
+          />
 
-          <p>
-            Estamos verificando as atividades
-            disponíveis para sua turma.
-          </p>
+          <StatCard
+            label="Respondidas"
+            value={completedCount}
+            description="Avaliações concluídas"
+            icon={CheckCircle2}
+            tone="teal"
+          />
+
+          <StatCard
+            label="Progresso"
+            value={`${completionRate}%`}
+            description="Do total publicado"
+            icon={BookOpenCheck}
+            tone="primary"
+          />
         </section>
       )}
 
+      {isLoading && (
+        <PageState
+          icon={LoaderCircle}
+          title="Carregando avaliações"
+          description="Estamos verificando as atividades disponíveis para sua turma."
+          tone="primary"
+          isLoading
+        />
+      )}
+
       {!isLoading && error && (
-        <section
-          className="student-feedback is-error"
-          role="alert"
-        >
-          <div>
-            <strong>
-              Não foi possível carregar
-              as avaliações
-            </strong>
-
-            <p>{error}</p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() =>
-              setReloadKey(
-                (currentValue) =>
-                  currentValue + 1,
-              )
-            }
-          >
-            Tentar novamente
-          </button>
-        </section>
+        <FeedbackBanner
+          tone="error"
+          title="Não foi possível carregar as avaliações"
+          description={error}
+          action={
+            <Button
+              variant="secondary"
+              icon={
+                <RefreshCw
+                  size={16}
+                  strokeWidth={1.9}
+                />
+              }
+              onClick={() =>
+                setReloadKey(
+                  (currentValue) =>
+                    currentValue + 1,
+                )
+              }
+            >
+              Tentar novamente
+            </Button>
+          }
+        />
       )}
 
       {!isLoading &&
         !error &&
-        assessmentItems.length > 0 && (
-          <>
-            <DataSearch
+        assessmentItems.length >
+          0 && (
+          <section className="student-dashboard-toolbar">
+            <SearchField
+              id="student-assessment-search"
               value={searchTerm}
               onChange={setSearchTerm}
               label="Pesquisar avaliações"
-              placeholder="Buscar por título ou descrição..."
-              resultCount={
-                filteredItems.length
-              }
-              totalCount={
-                assessmentItems.length
-              }
+              placeholder="Buscar por título, descrição ou resultado..."
             />
 
-            <div className="student-filter-row">
-              <div>
-                <label htmlFor="student-status-filter">
-                  Situação
-                </label>
+            <div className="student-dashboard-filter">
+              <label htmlFor="student-status-filter">
+                Situação
+              </label>
 
-                <select
-                  id="student-status-filter"
-                  value={statusFilter}
-                  onChange={(event) =>
-                    setStatusFilter(
-                      event.target
-                        .value as
-                        StudentStatusFilter,
-                    )
+              <select
+                id="student-status-filter"
+                value={statusFilter}
+                onChange={(event) =>
+                  setStatusFilter(
+                    event.target
+                      .value as
+                      StudentStatusFilter,
+                  )
+                }
+              >
+                <option value="ALL">
+                  Todas
+                </option>
+
+                <option value="AVAILABLE">
+                  Para responder
+                </option>
+
+                <option value="COMPLETED">
+                  Respondidas
+                </option>
+              </select>
+            </div>
+
+            <div className="student-dashboard-toolbar-action">
+              <span aria-live="polite">
+                {hasActiveFilters
+                  ? `${filteredItems.length} de ${assessmentItems.length}`
+                  : getAssessmentCountLabel(
+                      assessmentItems.length,
+                    )}
+              </span>
+
+              {hasActiveFilters && (
+                <Button
+                  variant="secondary"
+                  icon={
+                    <FilterX
+                      size={16}
+                      strokeWidth={1.9}
+                    />
                   }
-                >
-                  <option value="ALL">
-                    Todas
-                  </option>
-
-                  <option value="AVAILABLE">
-                    Disponíveis
-                  </option>
-
-                  <option value="COMPLETED">
-                    Respondidas
-                  </option>
-                </select>
-              </div>
-
-              {(searchTerm ||
-                statusFilter !== "ALL") && (
-                <button
-                  type="button"
                   onClick={clearFilters}
                 >
                   Limpar filtros
-                </button>
+                </Button>
               )}
             </div>
-          </>
+          </section>
         )}
 
       {!isLoading &&
         !error &&
-        assessmentItems.length === 0 && (
-          <section className="student-empty-state">
-            <h2>
-              Nenhuma avaliação disponível
-            </h2>
-
-            <p>
-              Quando seu professor publicar uma
-              avaliação, ela aparecerá aqui.
-            </p>
-          </section>
+        assessmentItems.length ===
+          0 && (
+          <PageState
+            icon={BookOpenCheck}
+            title="Nenhuma avaliação disponível"
+            description="Quando seu professor publicar uma avaliação para sua turma, ela aparecerá aqui."
+            tone="primary"
+          />
         )}
 
       {!isLoading &&
         !error &&
         assessmentItems.length > 0 &&
         filteredItems.length === 0 && (
-          <section className="student-empty-state">
-            <h2>
-              Nenhuma avaliação encontrada
-            </h2>
-
-            <p>
-              Não encontramos atividades
-              correspondentes aos filtros.
-            </p>
-
-            <button
-              type="button"
-              onClick={clearFilters}
-            >
-              Limpar filtros
-            </button>
-          </section>
+          <PageState
+            icon={SearchX}
+            title="Nenhuma avaliação corresponde aos filtros"
+            description="Tente outro termo de pesquisa ou selecione uma situação diferente."
+            action={
+              <Button
+                variant="secondary"
+                icon={
+                  <FilterX
+                    size={16}
+                    strokeWidth={1.9}
+                  />
+                }
+                onClick={clearFilters}
+              >
+                Limpar filtros
+              </Button>
+            }
+          />
         )}
 
       {!isLoading &&
         !error &&
         filteredItems.length > 0 && (
           <section
-            className="student-assessment-grid"
+            className="student-dashboard-assessment-grid"
             aria-label="Avaliações"
           >
-            {filteredItems.map((item) => {
-              const {
-                assessment,
-                submission,
-              } = item;
+            {filteredItems.map(
+              (item) => {
+                const {
+                  assessment,
+                  submission,
+                } = item;
 
-              const isCompleted =
-                submission !== null;
+                const isCompleted =
+                  submission !== null;
 
-              return (
-                <article
-                  key={assessment.id}
-                  className="student-assessment-card"
-                >
-                  <div className="student-assessment-card-header">
-                    <span
-                      className={[
-                        "student-assessment-status",
-                        isCompleted
-                          ? "is-completed"
-                          : "is-available",
-                      ].join(" ")}
-                    >
-                      {isCompleted
-                        ? "Respondida"
-                        : "Disponível"}
-                    </span>
+                const hasDescription =
+                  Boolean(
+                    assessment.description
+                      ?.trim(),
+                  );
 
-                    <span>
-                      {formatPublishedDate(
-                        assessment.publishedAt,
-                      )}
-                    </span>
-                  </div>
-
-                  <h2>
-                    {assessment.title}
-                  </h2>
-
-                  <p>
-                    {assessment.description ??
-                      "Nenhuma descrição informada."}
-                  </p>
-
-                  <dl className="student-assessment-metadata">
-                    <div>
-                      <dt>Questões</dt>
-
-                      <dd>
-                        {assessment.questionCount}
-                      </dd>
-                    </div>
-
-                    <div>
-                      <dt>
-                        {isCompleted
-                          ? "Resultado"
-                          : "Situação"}
-                      </dt>
-
-                      <dd>
-                        {submission
-                          ? `${formatScore(
-                              submission.score,
-                            )}%`
-                          : "Pendente"}
-                      </dd>
-                    </div>
-                  </dl>
-
-                  <Link
-                    to={`/aluno/avaliacoes/${assessment.id}`}
-                    className="student-assessment-action"
+                return (
+                  <article
+                    key={assessment.id}
+                    className={[
+                      "student-dashboard-assessment-card",
+                      isCompleted
+                        ? "is-completed"
+                        : "is-available",
+                    ].join(" ")}
                   >
-                    {isCompleted
-                      ? "Ver resultado"
-                      : "Responder avaliação"}
-                  </Link>
-                </article>
-              );
-            })}
+                    <header className="student-dashboard-assessment-card-header">
+                      <StatusBadge
+                        tone={
+                          isCompleted
+                            ? "success"
+                            : "warning"
+                        }
+                      >
+                        {isCompleted
+                          ? "Respondida"
+                          : "Para responder"}
+                      </StatusBadge>
+
+                      <span className="student-dashboard-assessment-date">
+                        {formatPublishedDate(
+                          assessment.publishedAt,
+                        )}
+                      </span>
+                    </header>
+
+                    <h2>
+                      {assessment.title}
+                    </h2>
+
+                    <p
+                      className={[
+                        "student-dashboard-assessment-description",
+                        hasDescription
+                          ? ""
+                          : "is-empty",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      {assessment.description ??
+                        "Nenhuma descrição informada."}
+                    </p>
+
+                    <dl className="student-dashboard-assessment-metadata">
+                      <div>
+                        <dt>Questões</dt>
+
+                        <dd>
+                          {
+                            assessment.questionCount
+                          }
+                        </dd>
+                      </div>
+
+                      <div>
+                        <dt>
+                          {isCompleted
+                            ? "Resultado"
+                            : "Situação"}
+                        </dt>
+
+                        <dd>
+                          {submission ? (
+                            <StatusBadge
+                              tone={getScoreTone(
+                                submission.score,
+                              )}
+                            >
+                              {formatScore(
+                                submission.score,
+                              )}
+                              %
+                            </StatusBadge>
+                          ) : (
+                            "Aguardando resposta"
+                          )}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <footer className="student-dashboard-assessment-footer">
+                      <span>
+                        {isCompleted
+                          ? "Consulte suas respostas e o desempenho obtido."
+                          : "Responda todas as questões antes de enviar."}
+                      </span>
+
+                      <ButtonLink
+                        to={`/aluno/avaliacoes/${assessment.id}`}
+                        variant={
+                          isCompleted
+                            ? "secondary"
+                            : "primary"
+                        }
+                        icon={
+                          <ArrowRight
+                            size={16}
+                            strokeWidth={1.9}
+                          />
+                        }
+                      >
+                        {isCompleted
+                          ? "Ver resultado"
+                          : "Responder"}
+                      </ButtonLink>
+                    </footer>
+                  </article>
+                );
+              },
+            )}
           </section>
         )}
-    </>
+    </div>
   );
 }

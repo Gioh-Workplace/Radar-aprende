@@ -10,6 +10,8 @@ import type {
     classroomIdParamsSchema,
     classroomStudentParamsSchema,
     createClassroomSchema,
+    listClassroomsQuerySchema,
+    updateClassroomStatusSchema,
   } from "../schemas/classroom.schema";
   import {
     addStudentToClassroom,
@@ -17,6 +19,7 @@ import type {
     getTeacherClassroomById,
     listTeacherClassrooms,
     removeStudentFromClassroom,
+    updateClassroomStatus,
   } from "../services/classroom.service";
   
   function getAuthenticatedTeacherId(
@@ -69,10 +72,20 @@ import type {
   ): Promise<void> {
     try {
       const teacherId =
-        getAuthenticatedTeacherId(request);
+        getAuthenticatedTeacherId(
+          request,
+        );
+  
+      const { status } =
+        listClassroomsQuerySchema.parse(
+          request.query,
+        );
   
       const classrooms =
-        await listTeacherClassrooms(teacherId);
+        await listTeacherClassrooms(
+          teacherId,
+          status,
+        );
   
       response.status(200).json({
         classrooms,
@@ -178,3 +191,41 @@ import type {
     }
   }
   
+  export async function updateClassroomStatusController(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const teacherId =
+        getAuthenticatedTeacherId(
+          request,
+        );
+  
+      const { classroomId } =
+        classroomIdParamsSchema.parse(
+          request.params,
+        );
+  
+      const { active } =
+        updateClassroomStatusSchema.parse(
+          request.body,
+        );
+  
+      const classroom =
+        await updateClassroomStatus(
+          classroomId,
+          teacherId,
+          active,
+        );
+  
+      response.status(200).json({
+        message: active
+          ? "Turma restaurada com sucesso."
+          : "Turma arquivada com sucesso.",
+        classroom,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }

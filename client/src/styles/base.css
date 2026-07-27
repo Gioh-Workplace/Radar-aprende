@@ -1,0 +1,59 @@
+:root {
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background: var(--color-bg);
+  
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  
+  html {
+    min-width: 320px;
+    min-height: 100%;
+    background: var(--color-bg);
+  }
+  
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+  
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+  
+  button {
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    cursor: not-allowed;
+  }
+  
+  a {
+    color: inherit;
+  }
+  
+  img,
+  svg {
+    display: block;
+  }
+  
+  ::selection {
+    color: var(--color-text);
+    background: var(--color-primary-soft);
+  }

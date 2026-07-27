@@ -1,14 +1,42 @@
 import {
+  Archive,
+  ArrowRight,
+  BarChart3,
+  CalendarDays,
+  ClipboardCheck,
+  FilePenLine,
+  FileText,
+  FilterX,
+  LoaderCircle,
+  Plus,
+  RefreshCw,
+  SearchX,
+  Send,
+  X,
+} from "lucide-react";
+import {
   useDeferredValue,
   useEffect,
   useMemo,
   useState,
 } from "react";
+
 import { Link } from "react-router";
 
 import { AssessmentCreationForm } from "../components/AssessmentCreationForm";
-import { DataSearch } from "../components/DataSearch";
-import { TeacherPageHeader } from "../components/TeacherPageHeader";
+import {
+  Button,
+  ButtonLink,
+} from "../components/ui/Button";
+import { FeedbackBanner } from "../components/ui/FeedbackBanner";
+import { PageHeader } from "../components/ui/PageHeader";
+import { PageState } from "../components/ui/PageState";
+import { SearchField } from "../components/ui/SearchField";
+import { StatCard } from "../components/ui/StatCard";
+import {
+  StatusBadge,
+  type StatusBadgeTone,
+} from "../components/ui/StatusBadge";
 import { getErrorMessage } from "../lib/get-error-message";
 import { normalizeSearch } from "../lib/normalize-search";
 import {
@@ -23,9 +51,16 @@ import type {
   TeacherClassroom,
 } from "../types/teacher";
 
+import "../styles/teacher-assessments.css";
+
 interface StatusOption {
   value: AssessmentStatus | "";
   label: string;
+}
+
+interface StatusPresentation {
+  label: string;
+  tone: StatusBadgeTone;
 }
 
 const statusOptions: StatusOption[] = [
@@ -47,34 +82,28 @@ const statusOptions: StatusOption[] = [
   },
 ];
 
-function getStatusLabel(
+function getStatusPresentation(
   status: AssessmentStatus,
-): string {
-  const labels: Record<
+): StatusPresentation {
+  const presentations: Record<
     AssessmentStatus,
-    string
+    StatusPresentation
   > = {
-    DRAFT: "Rascunho",
-    PUBLISHED: "Publicada",
-    CLOSED: "Encerrada",
+    DRAFT: {
+      label: "Rascunho",
+      tone: "warning",
+    },
+    PUBLISHED: {
+      label: "Publicada",
+      tone: "success",
+    },
+    CLOSED: {
+      label: "Encerrada",
+      tone: "neutral",
+    },
   };
 
-  return labels[status];
-}
-
-function getStatusClassName(
-  status: AssessmentStatus,
-): string {
-  const classNames: Record<
-    AssessmentStatus,
-    string
-  > = {
-    DRAFT: "is-draft",
-    PUBLISHED: "is-published",
-    CLOSED: "is-closed",
-  };
-
-  return classNames[status];
+  return presentations[status];
 }
 
 function getQuestionCountLabel(
@@ -85,9 +114,41 @@ function getQuestionCountLabel(
     : `${questionCount} questões`;
 }
 
+function getAssessmentCountLabel(
+  assessmentCount: number,
+): string {
+  return assessmentCount === 1
+    ? "1 avaliação"
+    : `${assessmentCount} avaliações`;
+}
+
+function getAssessmentNextStep(
+  status: AssessmentStatus,
+): string {
+  const nextSteps: Record<
+    AssessmentStatus,
+    string
+  > = {
+    DRAFT:
+      "Adicione questões, revise o conteúdo e publique quando estiver pronta.",
+    PUBLISHED:
+      "Acompanhe participação, desempenho e recomendações pedagógicas.",
+    CLOSED:
+      "Consulte os resultados e o histórico preservado desta avaliação.",
+  };
+
+  return nextSteps[status];
+}
+
 function formatAssessmentDate(
   value: string,
 ): string {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Data indisponível";
+  }
+
   return new Intl.DateTimeFormat(
     "pt-BR",
     {
@@ -95,7 +156,18 @@ function formatAssessmentDate(
       month: "short",
       year: "numeric",
     },
-  ).format(new Date(value));
+  ).format(date);
+}
+
+function getTimestamp(
+  value: string,
+): number {
+  const timestamp =
+    new Date(value).getTime();
+
+  return Number.isNaN(timestamp)
+    ? 0
+    : timestamp;
 }
 
 function sortAssessments(
@@ -103,12 +175,24 @@ function sortAssessments(
 ): TeacherAssessment[] {
   return [...assessments].sort(
     (firstAssessment, secondAssessment) =>
-      new Date(
+      getTimestamp(
         secondAssessment.createdAt,
-      ).getTime() -
-      new Date(
+      ) -
+      getTimestamp(
         firstAssessment.createdAt,
-      ).getTime(),
+      ),
+  );
+}
+
+function sortClassrooms(
+  classrooms: TeacherClassroom[],
+): TeacherClassroom[] {
+  return [...classrooms].sort(
+    (firstClassroom, secondClassroom) =>
+      firstClassroom.name.localeCompare(
+        secondClassroom.name,
+        "pt-BR",
+      ),
   );
 }
 
@@ -134,6 +218,14 @@ export function TeacherAssessmentsPage() {
     managementError,
     setManagementError,
   ] = useState<string | null>(null);
+
+  const [
+    createdAssessmentId,
+    setCreatedAssessmentId,
+  ] = useState<string | null>(null);
+
+  const [isCreateOpen, setIsCreateOpen] =
+    useState(false);
 
   const [searchTerm, setSearchTerm] =
     useState("");
@@ -165,7 +257,7 @@ export function TeacherAssessmentsPage() {
           classroomList,
         ] = await Promise.all([
           getTeacherAssessments(),
-          getTeacherClassrooms(),
+          getTeacherClassrooms("all"),
         ]);
 
         if (isCancelled) {
@@ -178,7 +270,11 @@ export function TeacherAssessmentsPage() {
           ),
         );
 
-        setClassrooms(classroomList);
+        setClassrooms(
+          sortClassrooms(
+            classroomList,
+          ),
+        );
       } catch (caughtError) {
         if (isCancelled) {
           return;
@@ -204,16 +300,53 @@ export function TeacherAssessmentsPage() {
     };
   }, [reloadKey]);
 
-  const classroomById = useMemo(
-    () =>
-      new Map(
-        classrooms.map((classroom) => [
-          classroom.id,
-          classroom,
-        ]),
-      ),
-    [classrooms],
-  );
+  const activeClassrooms =
+    useMemo(
+      () =>
+        classrooms.filter(
+          (classroom) =>
+            classroom.active,
+        ),
+      [classrooms],
+    );
+
+  const classroomById =
+    useMemo(
+      () =>
+        new Map(
+          classrooms.map(
+            (classroom) => [
+              classroom.id,
+              classroom,
+            ],
+          ),
+        ),
+      [classrooms],
+    );
+
+  const assessmentCounts =
+    useMemo(
+      () => ({
+        drafts: assessments.filter(
+          (assessment) =>
+            assessment.status ===
+            "DRAFT",
+        ).length,
+
+        published: assessments.filter(
+          (assessment) =>
+            assessment.status ===
+            "PUBLISHED",
+        ).length,
+
+        closed: assessments.filter(
+          (assessment) =>
+            assessment.status ===
+            "CLOSED",
+        ).length,
+      }),
+      [assessments],
+    );
 
   const filteredAssessments =
     useMemo(() => {
@@ -249,6 +382,11 @@ export function TeacherAssessmentsPage() {
               assessment.classroomId,
             );
 
+          const status =
+            getStatusPresentation(
+              assessment.status,
+            );
+
           const searchableContent =
             normalizeSearch(
               [
@@ -256,9 +394,7 @@ export function TeacherAssessmentsPage() {
                 assessment.description,
                 classroom?.name,
                 classroom?.subject,
-                getStatusLabel(
-                  assessment.status,
-                ),
+                status.label,
               ].join(" "),
             );
 
@@ -275,11 +411,19 @@ export function TeacherAssessmentsPage() {
       statusFilter,
     ]);
 
+  const hasActiveFilters =
+    Boolean(
+      searchTerm ||
+      statusFilter ||
+      classroomFilter,
+    );
+
   async function handleCreateAssessment(
     input: CreateTeacherAssessmentInput,
   ): Promise<boolean> {
     setManagementSuccess(null);
     setManagementError(null);
+    setCreatedAssessmentId(null);
 
     try {
       const createdAssessment =
@@ -308,6 +452,15 @@ export function TeacherAssessmentsPage() {
         }.`,
       );
 
+      setCreatedAssessmentId(
+        createdAssessment.id,
+      );
+
+      setSearchTerm("");
+      setStatusFilter("");
+      setClassroomFilter("");
+      setIsCreateOpen(false);
+
       return true;
     } catch (caughtError) {
       setManagementError(
@@ -327,258 +480,380 @@ export function TeacherAssessmentsPage() {
     setClassroomFilter("");
   }
 
-  const hasActiveFilters =
-    Boolean(
-      searchTerm ||
-      statusFilter ||
-      classroomFilter,
+  function toggleCreationForm() {
+    setIsCreateOpen(
+      (currentValue) =>
+        !currentValue,
     );
 
+    setManagementError(null);
+  }
+
   return (
-    <>
-      <TeacherPageHeader
+    <div className="teacher-assessments-page">
+      <PageHeader
         eyebrow="Diagnósticos"
         title="Avaliações"
-        description="Crie avaliações diagnósticas, publique atividades e acompanhe os resultados."
+        description="Crie avaliações diagnósticas, organize os rascunhos e acompanhe os resultados das turmas."
+        actions={
+          <Button
+            variant={
+              isCreateOpen
+                ? "secondary"
+                : "primary"
+            }
+            icon={
+              isCreateOpen ? (
+                <X
+                  size={17}
+                  strokeWidth={2}
+                />
+              ) : (
+                <Plus
+                  size={17}
+                  strokeWidth={2}
+                />
+              )
+            }
+            onClick={
+              toggleCreationForm
+            }
+            disabled={isLoading}
+          >
+            {isCreateOpen
+              ? "Fechar formulário"
+              : "Nova avaliação"}
+          </Button>
+        }
       />
 
       {managementSuccess && (
-        <div
-          className="teacher-inline-feedback is-success"
-          role="status"
-        >
-          {managementSuccess}
-        </div>
+        <FeedbackBanner
+          tone="success"
+          title="Rascunho criado"
+          description={
+            managementSuccess
+          }
+          action={
+            createdAssessmentId ? (
+              <ButtonLink
+                to={`/professor/avaliacoes/${createdAssessmentId}`}
+                variant="secondary"
+                icon={
+                  <ArrowRight
+                    size={16}
+                    strokeWidth={1.9}
+                  />
+                }
+              >
+                Adicionar questões
+              </ButtonLink>
+            ) : undefined
+          }
+        />
       )}
 
       {managementError && (
-        <div
-          className="teacher-inline-feedback is-error"
-          role="alert"
-        >
-          {managementError}
-        </div>
+        <FeedbackBanner
+          tone="error"
+          title="Não foi possível criar a avaliação"
+          description={
+            managementError
+          }
+        />
       )}
 
-      <section className="teacher-panel">
-        <div className="teacher-panel-header">
-          <h2>Nova avaliação</h2>
-
-          <p>
-            Crie um rascunho e depois
-            adicione as questões antes de
-            publicá-lo.
-          </p>
-        </div>
-
-        {classrooms.length === 0 &&
-        !isLoading ? (
-          <div className="teacher-empty-state">
-            <h2>
-              Cadastre uma turma primeiro
-            </h2>
+      {isCreateOpen && (
+        <section className="teacher-assessments-creation">
+          <div className="teacher-assessments-creation-header">
+            <h2>Nova avaliação</h2>
 
             <p>
-              Uma avaliação precisa estar
-              vinculada a uma turma.
+              Crie o rascunho com as
+              informações principais. As
+              questões serão adicionadas na
+              próxima etapa.
             </p>
           </div>
-        ) : (
-          <AssessmentCreationForm
-            classrooms={classrooms}
-            onSubmit={
-              handleCreateAssessment
-            }
+
+          {activeClassrooms.length >
+          0 ? (
+            <AssessmentCreationForm
+              classrooms={
+                activeClassrooms
+              }
+              onSubmit={
+                handleCreateAssessment
+              }
+              onCancel={() =>
+                setIsCreateOpen(false)
+              }
+            />
+          ) : (
+            <div className="teacher-assessments-no-classroom">
+              <strong>
+                Nenhuma turma ativa
+              </strong>
+
+              <p>
+                Restaure uma turma
+                arquivada ou crie uma nova
+                turma antes de cadastrar a
+                avaliação.
+              </p>
+            </div>
+          )}
+        </section>
+      )}
+
+      {!isLoading && !error && (
+        <section
+          className="teacher-assessments-overview"
+          aria-label="Resumo das avaliações"
+        >
+          <StatCard
+            label="Avaliações"
+            value={assessments.length}
+            description="Diagnósticos cadastrados"
+            icon={FileText}
+            tone="primary"
           />
-        )}
-      </section>
+
+          <StatCard
+            label="Rascunhos"
+            value={
+              assessmentCounts.drafts
+            }
+            description="Aguardando conclusão"
+            icon={FilePenLine}
+            tone="warning"
+          />
+
+          <StatCard
+            label="Publicadas"
+            value={
+              assessmentCounts.published
+            }
+            description="Disponíveis aos alunos"
+            icon={Send}
+            tone="teal"
+          />
+
+          <StatCard
+            label="Encerradas"
+            value={
+              assessmentCounts.closed
+            }
+            description="Histórico preservado"
+            icon={Archive}
+            tone="neutral"
+          />
+        </section>
+      )}
 
       {isLoading && (
-        <section
-          className="teacher-feedback"
-          aria-live="polite"
-        >
-          <div>
-            <strong>
-              Carregando avaliações...
-            </strong>
-
-            <p>
-              Estamos consultando os
-              diagnósticos cadastrados.
-            </p>
-          </div>
-        </section>
+        <PageState
+          icon={LoaderCircle}
+          title="Carregando avaliações"
+          description="Estamos consultando os diagnósticos cadastrados no RadarAprende."
+          tone="primary"
+          isLoading
+        />
       )}
 
       {!isLoading && error && (
-        <section
-          className="teacher-feedback is-error"
-          role="alert"
-        >
-          <div>
-            <strong>
-              Não foi possível carregar
-              as avaliações
-            </strong>
-
-            <p>{error}</p>
-          </div>
-
-          <button
-            type="button"
-            className="teacher-retry-button"
-            onClick={() =>
-              setReloadKey(
-                (currentValue) =>
-                  currentValue + 1,
-              )
-            }
-          >
-            Tentar novamente
-          </button>
-        </section>
+        <FeedbackBanner
+          tone="error"
+          title="Não foi possível carregar as avaliações"
+          description={error}
+          action={
+            <Button
+              variant="secondary"
+              icon={
+                <RefreshCw
+                  size={16}
+                  strokeWidth={1.9}
+                />
+              }
+              onClick={() =>
+                setReloadKey(
+                  (currentValue) =>
+                    currentValue + 1,
+                )
+              }
+            >
+              Tentar novamente
+            </Button>
+          }
+        />
       )}
 
       {!isLoading &&
         !error &&
         assessments.length > 0 && (
-          <>
-            <DataSearch
+          <section className="teacher-assessments-toolbar">
+            <SearchField
+              id="assessment-search"
               value={searchTerm}
               onChange={setSearchTerm}
               label="Pesquisar avaliações"
-              placeholder="Buscar por título, descrição, turma ou disciplina..."
-              resultCount={
-                filteredAssessments.length
-              }
-              totalCount={
-                assessments.length
-              }
+              placeholder="Buscar por título, turma, disciplina ou descrição..."
             />
 
-            <div className="teacher-filter-row teacher-filter-row-multiple">
-              <div className="teacher-filter-control">
-                <label htmlFor="assessment-status-filter">
-                  Status
-                </label>
+            <div className="teacher-assessments-filter">
+              <label htmlFor="assessment-status-filter">
+                Status
+              </label>
 
-                <select
-                  id="assessment-status-filter"
-                  value={statusFilter}
-                  onChange={(event) =>
-                    setStatusFilter(
-                      event.target.value as
-                        | AssessmentStatus
-                        | "",
-                    )
-                  }
-                >
-                  {statusOptions.map(
-                    (option) => (
-                      <option
-                        key={
-                          option.value ||
-                          "all"
-                        }
-                        value={option.value}
-                      >
-                        {option.label}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
+              <select
+                id="assessment-status-filter"
+                value={statusFilter}
+                onChange={(event) =>
+                  setStatusFilter(
+                    event.target.value as
+                      | AssessmentStatus
+                      | "",
+                  )
+                }
+              >
+                {statusOptions.map(
+                  (option) => (
+                    <option
+                      key={
+                        option.value ||
+                        "all"
+                      }
+                      value={option.value}
+                    >
+                      {option.label}
+                    </option>
+                  ),
+                )}
+              </select>
+            </div>
 
-              <div className="teacher-filter-control">
-                <label htmlFor="assessment-classroom-filter">
-                  Turma
-                </label>
+            <div className="teacher-assessments-filter">
+              <label htmlFor="assessment-classroom-filter">
+                Turma
+              </label>
 
-                <select
-                  id="assessment-classroom-filter"
-                  value={classroomFilter}
-                  onChange={(event) =>
-                    setClassroomFilter(
-                      event.target.value,
-                    )
-                  }
-                >
-                  <option value="">
-                    Todas as turmas
-                  </option>
+              <select
+                id="assessment-classroom-filter"
+                value={classroomFilter}
+                onChange={(event) =>
+                  setClassroomFilter(
+                    event.target.value,
+                  )
+                }
+              >
+                <option value="">
+                  Todas as turmas
+                </option>
 
-                  {classrooms.map(
-                    (classroom) => (
-                      <option
-                        key={classroom.id}
-                        value={classroom.id}
-                      >
-                        {classroom.name}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
+                {classrooms.map(
+                  (classroom) => (
+                    <option
+                      key={classroom.id}
+                      value={classroom.id}
+                    >
+                      {classroom.name}
+                      {!classroom.active
+                        ? " — Arquivada"
+                        : ""}
+                    </option>
+                  ),
+                )}
+              </select>
+            </div>
+
+            <div className="teacher-assessments-toolbar-action">
+              <span
+                className="teacher-assessments-result-count"
+                aria-live="polite"
+              >
+                {hasActiveFilters
+                  ? `${filteredAssessments.length} de ${assessments.length}`
+                  : getAssessmentCountLabel(
+                      assessments.length,
+                    )}
+              </span>
 
               {hasActiveFilters && (
-                <button
-                  type="button"
-                  className="teacher-secondary-action"
+                <Button
+                  variant="secondary"
+                  icon={
+                    <FilterX
+                      size={16}
+                      strokeWidth={1.9}
+                    />
+                  }
                   onClick={clearFilters}
                 >
                   Limpar filtros
-                </button>
+                </Button>
               )}
             </div>
-          </>
+          </section>
         )}
 
       {!isLoading &&
         !error &&
         assessments.length === 0 && (
-          <section className="teacher-empty-state">
-            <h2>
-              Nenhuma avaliação cadastrada
-            </h2>
-
-            <p>
-              Use o formulário acima para
-              criar o primeiro diagnóstico.
-            </p>
-          </section>
+          <PageState
+            icon={ClipboardCheck}
+            title="Nenhuma avaliação cadastrada"
+            description="Crie o primeiro diagnóstico para começar a avaliar as habilidades das turmas."
+            tone="primary"
+            action={
+              <Button
+                icon={
+                  <Plus
+                    size={16}
+                    strokeWidth={2}
+                  />
+                }
+                onClick={() =>
+                  setIsCreateOpen(true)
+                }
+              >
+                Nova avaliação
+              </Button>
+            }
+          />
         )}
 
       {!isLoading &&
         !error &&
         assessments.length > 0 &&
-        filteredAssessments.length === 0 && (
-          <section className="teacher-empty-state">
-            <h2>
-              Nenhuma avaliação encontrada
-            </h2>
-
-            <p>
-              Não encontramos avaliações
-              correspondentes aos filtros
-              informados.
-            </p>
-
-            <button
-              type="button"
-              className="teacher-empty-action"
-              onClick={clearFilters}
-            >
-              Limpar filtros
-            </button>
-          </section>
+        filteredAssessments.length ===
+          0 && (
+          <PageState
+            icon={SearchX}
+            title="Nenhuma avaliação corresponde aos filtros"
+            description="Tente outro termo, status ou turma."
+            action={
+              <Button
+                variant="secondary"
+                icon={
+                  <FilterX
+                    size={16}
+                    strokeWidth={1.9}
+                  />
+                }
+                onClick={clearFilters}
+              >
+                Limpar filtros
+              </Button>
+            }
+          />
         )}
 
       {!isLoading &&
         !error &&
-        filteredAssessments.length > 0 && (
+        filteredAssessments.length >
+          0 && (
           <section
-            className="teacher-assessment-grid"
+            className="teacher-assessments-grid"
             aria-label="Avaliações cadastradas"
           >
             {filteredAssessments.map(
@@ -588,49 +863,83 @@ export function TeacherAssessmentsPage() {
                     assessment.classroomId,
                   );
 
-                return (
-                  <Link
-                    key={assessment.id}
-                    to={`/professor/avaliacoes/${assessment.id}`}
-                    className="teacher-assessment-card"
-                  >
-                    <div className="teacher-assessment-card-header">
-                      <span
-                        className={[
-                          "teacher-assessment-status",
-                          getStatusClassName(
-                            assessment.status,
-                          ),
-                        ].join(" ")}
-                      >
-                        {getStatusLabel(
-                          assessment.status,
-                        )}
-                      </span>
+                const status =
+                  getStatusPresentation(
+                    assessment.status,
+                  );
 
-                      <span className="teacher-assessment-date">
+                const hasDescription =
+                  Boolean(
+                    assessment.description?.trim(),
+                  );
+
+                const isDraft =
+                  assessment.status ===
+                  "DRAFT";
+
+                return (
+                  <article
+                    key={assessment.id}
+                    className="teacher-assessments-card"
+                  >
+                    <div className="teacher-assessments-card-top">
+                      <div className="teacher-assessments-card-badges">
+                        <StatusBadge
+                          tone={status.tone}
+                        >
+                          {status.label}
+                        </StatusBadge>
+
+                        {classroom &&
+                          !classroom.active && (
+                            <StatusBadge tone="neutral">
+                              Turma arquivada
+                            </StatusBadge>
+                          )}
+                      </div>
+
+                      <span className="teacher-assessments-date">
+                        <CalendarDays
+                          size={14}
+                          strokeWidth={1.9}
+                          aria-hidden="true"
+                        />
+
                         {formatAssessmentDate(
                           assessment.createdAt,
                         )}
                       </span>
                     </div>
 
-                    <h2>
-                      {assessment.title}
-                    </h2>
+                    <Link
+                      to={`/professor/avaliacoes/${assessment.id}`}
+                      className="teacher-assessments-title-link"
+                      aria-label={`Abrir ${assessment.title}`}
+                    >
+                      <h2>{assessment.title}</h2>
+                    </Link>
 
-                    <p className="teacher-assessment-description">
+                    <p
+                      className={[
+                        "teacher-assessments-description",
+                        hasDescription
+                          ? ""
+                          : "is-empty",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
                       {assessment.description ??
                         "Nenhuma descrição informada."}
                     </p>
 
-                    <dl className="teacher-assessment-metadata">
+                    <dl className="teacher-assessments-metadata">
                       <div>
                         <dt>Turma</dt>
 
                         <dd>
                           {classroom?.name ??
-                            "Turma não encontrada"}
+                            "Turma indisponível"}
                         </dd>
                       </div>
 
@@ -645,24 +954,58 @@ export function TeacherAssessmentsPage() {
                       </div>
                     </dl>
 
-                    <span className="teacher-assessment-next-step">
-                      {assessment.status ===
-                      "DRAFT"
-                        ? "Pronta para adicionar questões"
-                        : "Avaliação disponível para acompanhamento"}
-                    </span>
-                    
-                    <span className="teacher-assessment-open-label">
-                      {assessment.status === "DRAFT"
-                        ? "Editar avaliação"
-                        : "Abrir avaliação"}
-                    </span>
-                  </Link>
+                    <div className="teacher-assessments-next-step">
+                      {isDraft ? (
+                        <FilePenLine
+                          size={16}
+                          strokeWidth={1.9}
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <BarChart3
+                          size={16}
+                          strokeWidth={1.9}
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      <span>
+                        {getAssessmentNextStep(
+                          assessment.status,
+                        )}
+                      </span>
+                    </div>
+
+                    <footer className="teacher-assessments-card-footer">
+                      <ButtonLink
+                        to={
+                          isDraft
+                            ? `/professor/avaliacoes/${assessment.id}`
+                            : `/professor/avaliacoes/${assessment.id}/resultados`
+                        }
+                        variant={
+                          isDraft
+                            ? "secondary"
+                            : "primary"
+                        }
+                        icon={
+                          <ArrowRight
+                            size={16}
+                            strokeWidth={1.9}
+                          />
+                        }
+                      >
+                        {isDraft
+                          ? "Continuar edição"
+                          : "Ver resultados"}
+                      </ButtonLink>
+                    </footer>
+                  </article>
                 );
               },
             )}
           </section>
         )}
-    </>
+    </div>
   );
 }

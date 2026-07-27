@@ -1,0 +1,354 @@
+.teacher-dashboard {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .teacher-dashboard-hero {
+    position: relative;
+    overflow: hidden;
+    padding:
+      clamp(1.4rem, 3vw, 2rem);
+    border: 1px solid #dddff5;
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(
+        135deg,
+        var(--color-surface),
+        var(--color-primary-softer)
+      );
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .teacher-dashboard-hero::before,
+  .teacher-dashboard-hero::after {
+    position: absolute;
+    content: "";
+    border: 1px solid
+      rgba(91, 91, 214, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  
+  .teacher-dashboard-hero::before {
+    width: 18rem;
+    height: 18rem;
+    top: -10rem;
+    right: -4rem;
+  }
+  
+  .teacher-dashboard-hero::after {
+    width: 11rem;
+    height: 11rem;
+    top: -6.5rem;
+    right: -0.5rem;
+  }
+  
+  .teacher-dashboard-hero
+  .ui-page-header {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .teacher-dashboard-summary {
+    display: grid;
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+  
+  .teacher-dashboard-main-grid {
+    display: grid;
+    grid-template-columns:
+      minmax(280px, 0.8fr)
+      minmax(420px, 1.2fr);
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .teacher-dashboard-main-grid
+    > .teacher-dashboard-panel {
+    height: 100%;
+    }
+    
+  .teacher-dashboard-panel {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .teacher-dashboard-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .teacher-dashboard-panel-header h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 720;
+    letter-spacing: -0.025em;
+  }
+  
+  .teacher-dashboard-panel-header p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.77rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-dashboard-priority-list {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.85rem;
+  }
+  
+  .teacher-dashboard-priority {
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-dashboard-priority.is-warning {
+    border-color: #f0dbad;
+    background:
+      linear-gradient(
+        135deg,
+        #fffdf7,
+        var(--color-warning-soft)
+      );
+  }
+  
+  .teacher-dashboard-priority.is-primary {
+    border-color: #dadaf6;
+    background:
+      linear-gradient(
+        135deg,
+        #ffffff,
+        var(--color-primary-softer)
+      );
+  }
+  
+  .teacher-dashboard-priority-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .teacher-dashboard-priority h3 {
+    margin: 0.55rem 0 0;
+    color: var(--color-text);
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+  
+  .teacher-dashboard-priority p {
+    margin: 0.3rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+  
+  .teacher-dashboard-priority
+  .ui-button {
+    min-height: 2.1rem;
+    margin-top: 0.4rem;
+    padding-block: 0.35rem;
+    padding-inline: 0;
+  }
+  
+  .teacher-dashboard-assessment-list {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 1.1rem;
+  }
+  
+  .teacher-dashboard-assessment {
+    min-width: 0;
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto
+      auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: inherit;
+    background: var(--color-surface-soft);
+    text-decoration: none;
+    transition:
+      border-color var(--transition-fast),
+      background var(--transition-fast),
+      transform var(--transition-fast);
+  }
+  
+  .teacher-dashboard-assessment:hover {
+    border-color: #c7c7ee;
+    background: var(--color-primary-softer);
+    transform: translateY(-1px);
+  }
+  
+  .teacher-dashboard-assessment-copy {
+    min-width: 0;
+  }
+  
+  .teacher-dashboard-assessment-copy strong {
+    display: block;
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 0.83rem;
+    font-weight: 680;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .teacher-dashboard-assessment-copy span {
+    display: block;
+    margin-top: 0.3rem;
+    overflow: hidden;
+    color: var(--color-text-soft);
+    font-size: 0.7rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .teacher-dashboard-assessment-arrow {
+    display: grid;
+    place-items: center;
+    color: var(--color-text-subtle);
+  }
+  
+  .teacher-dashboard-empty {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    border: 1px dashed
+      var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-dashboard-empty h3 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.9rem;
+  }
+  
+  .teacher-dashboard-empty p {
+    max-width: 420px;
+    margin: 0.5rem auto 0;
+    color: var(--color-text-soft);
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-dashboard-empty
+  .ui-button {
+    margin-top: 0.9rem;
+  }
+  
+  .teacher-dashboard-shortcuts {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+  
+  .teacher-dashboard-shortcut {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: inherit;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+    text-decoration: none;
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      transform var(--transition-fast);
+  }
+  
+  .teacher-dashboard-shortcut:hover {
+    border-color: #c9c9ee;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+  
+  .teacher-dashboard-shortcut-icon {
+    width: 2.65rem;
+    height: 2.65rem;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+  }
+  
+  .teacher-dashboard-shortcut-copy {
+    min-width: 0;
+  }
+  
+  .teacher-dashboard-shortcut strong {
+    display: block;
+    color: var(--color-text);
+    font-size: 0.82rem;
+  }
+  
+  .teacher-dashboard-shortcut span {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--color-text-soft);
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+  
+  @media (max-width: 1150px) {
+    .teacher-dashboard-summary {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  
+    .teacher-dashboard-main-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 760px) {
+    .teacher-dashboard-summary,
+    .teacher-dashboard-shortcuts {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 560px) {
+    .teacher-dashboard-assessment {
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+    }
+  
+    .teacher-dashboard-assessment
+    .ui-status-badge {
+      grid-row: 2;
+      grid-column: 1;
+      justify-self: start;
+    }
+  
+    .teacher-dashboard-assessment-arrow {
+      grid-row: 1 / 3;
+      grid-column: 2;
+    }
+  }

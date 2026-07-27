@@ -1,0 +1,461 @@
+.teacher-assessments-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .teacher-assessments-overview {
+    display: grid;
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+  
+  .teacher-assessments-creation {
+    padding: 1.25rem;
+    border: 1px solid #dadaf6;
+    border-radius: var(--radius-xl);
+    background:
+      linear-gradient(
+        135deg,
+        var(--color-surface),
+        var(--color-primary-softer)
+      );
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .teacher-assessments-creation-header h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 720;
+    letter-spacing: -0.025em;
+  }
+  
+  .teacher-assessments-creation-header p {
+    max-width: 650px;
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessment-form {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.15rem;
+  }
+  
+  .teacher-assessment-form-field {
+    min-width: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  
+  .teacher-assessment-form-field.is-wide {
+    grid-column: 1 / -1;
+  }
+  
+  .teacher-assessment-form-field label {
+    color: var(--color-text);
+    font-size: 0.73rem;
+    font-weight: 680;
+  }
+  
+  .teacher-assessment-form-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .teacher-assessment-form-label-row
+  > span {
+    color: var(--color-text-subtle);
+    font-size: 0.67rem;
+    font-weight: 620;
+  }
+  
+  .teacher-assessment-form-field
+  :is(input, select, textarea) {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+    transition:
+      border-color
+        var(--transition-fast),
+      box-shadow
+        var(--transition-fast);
+  }
+  
+  .teacher-assessment-form-field
+  :is(input, select) {
+    min-height: 2.8rem;
+  }
+  
+  .teacher-assessment-form-field
+  textarea {
+    min-height: 7rem;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  
+  .teacher-assessment-form-field
+  :is(input, select, textarea):focus {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 4px
+      var(--focus-ring);
+  }
+  
+  .teacher-assessment-form-field
+  :is(input, textarea)::placeholder {
+    color: var(--color-text-subtle);
+  }
+  
+  .teacher-assessment-form-counter {
+    justify-self: end;
+    color: var(--color-text-subtle);
+    font-size: 0.65rem;
+  }
+  
+  .teacher-assessment-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.7rem;
+  }
+  
+  .teacher-assessments-no-classroom {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px dashed
+      var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-assessments-no-classroom strong {
+    color: var(--color-text);
+    font-size: 0.82rem;
+  }
+  
+  .teacher-assessments-no-classroom p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.74rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessments-toolbar {
+    display: grid;
+    grid-template-columns:
+      minmax(270px, 1.25fr)
+      minmax(160px, 0.55fr)
+      minmax(200px, 0.75fr)
+      auto;
+    align-items: end;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .teacher-assessments-filter {
+    min-width: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  
+  .teacher-assessments-filter label {
+    color: var(--color-text);
+    font-size: 0.76rem;
+    font-weight: 680;
+  }
+  
+  .teacher-assessments-filter select {
+    width: 100%;
+    min-height: 2.85rem;
+    padding:
+      0.65rem
+      2.4rem
+      0.65rem
+      0.8rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+  }
+  
+  .teacher-assessments-filter
+  select:hover {
+    border-color:
+      var(--color-border-strong);
+  }
+  
+  .teacher-assessments-filter
+  select:focus {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 0 0 4px
+      var(--focus-ring);
+  }
+  
+  .teacher-assessments-toolbar-action {
+    display: grid;
+    gap: 0.45rem;
+  }
+  
+  .teacher-assessments-result-count {
+    color: var(--color-text-soft);
+    font-size: 0.68rem;
+    font-weight: 620;
+    text-align: right;
+    white-space: nowrap;
+  }
+  
+  .teacher-assessments-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+  
+  .teacher-assessments-card {
+    min-width: 0;
+    min-height: 20rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1.2rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+    transition:
+      border-color
+        var(--transition-fast),
+      box-shadow
+        var(--transition-fast),
+      transform
+        var(--transition-fast);
+  }
+  
+  .teacher-assessments-card:hover {
+    border-color: #c7c7ee;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+  
+  .teacher-assessments-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .teacher-assessments-card-badges {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  
+  .teacher-assessments-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex: 0 0 auto;
+    color: var(--color-text-subtle);
+    font-size: 0.68rem;
+    font-weight: 620;
+  }
+  
+  .teacher-assessments-title-link {
+    margin-top: 1rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .teacher-assessments-title-link:hover {
+    color: var(--color-primary);
+  }
+  
+  .teacher-assessments-title-link h2 {
+    margin: 0;
+    color: inherit;
+    font-size: 1.05rem;
+    font-weight: 720;
+    line-height: 1.4;
+    letter-spacing: -0.025em;
+  }
+  
+  .teacher-assessments-description {
+    display: -webkit-box;
+    overflow: hidden;
+    min-height: 3.5rem;
+    margin: 0.55rem 0 0;
+    color: var(--color-text-soft);
+    font-size: 0.75rem;
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  
+  .teacher-assessments-description.is-empty {
+    color: var(--color-text-subtle);
+    font-style: italic;
+  }
+  
+  .teacher-assessments-metadata {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 1rem 0 0;
+  }
+  
+  .teacher-assessments-metadata div {
+    min-width: 0;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-assessments-metadata dt {
+    color: var(--color-text-subtle);
+    font-size: 0.65rem;
+    font-weight: 650;
+  }
+  
+  .teacher-assessments-metadata dd {
+    margin: 0.3rem 0 0;
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 0.76rem;
+    font-weight: 680;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .teacher-assessments-next-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    margin-top: 0.85rem;
+    padding: 0.75rem;
+    border-left: 3px solid
+      var(--color-primary);
+    border-radius:
+      0
+      var(--radius-sm)
+      var(--radius-sm)
+      0;
+    color: var(--color-text-soft);
+    background: var(--color-primary-softer);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+  
+  .teacher-assessments-next-step svg {
+    flex: 0 0 auto;
+    margin-top: 0.05rem;
+    color: var(--color-primary);
+  }
+  
+  .teacher-assessments-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+  
+  .teacher-assessments-card-footer
+  .ui-button {
+    flex: 1;
+  }
+  
+  @media (max-width: 1180px) {
+    .teacher-assessments-overview {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  
+    .teacher-assessments-toolbar {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+  
+    .teacher-assessments-toolbar-action {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  
+  @media (max-width: 760px) {
+    .teacher-assessments-overview,
+    .teacher-assessments-grid,
+    .teacher-assessment-form,
+    .teacher-assessments-toolbar {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-assessment-form-field.is-wide,
+    .teacher-assessment-form-actions,
+    .teacher-assessments-toolbar-action {
+      grid-column: auto;
+    }
+  
+    .teacher-assessment-form-actions {
+      flex-direction: column-reverse;
+    }
+  
+    .teacher-assessment-form-actions
+    .ui-button {
+      width: 100%;
+    }
+  
+    .teacher-assessments-toolbar-action {
+      display: grid;
+      gap: 0.65rem;
+    }
+  
+    .teacher-assessments-result-count {
+      text-align: left;
+    }
+  
+    .teacher-assessments-card {
+      min-height: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .teacher-assessments-card-top {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  
+    .teacher-assessments-metadata {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-assessments-card-footer {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  }
