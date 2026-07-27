@@ -557,3 +557,131 @@
       grid-template-columns: 1fr;
     }
   }
+
+  .teacher-results-student-card-list {
+    display: none;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  
+  .teacher-results-student-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid
+      var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-soft);
+  }
+  
+  .teacher-results-student-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  
+  .teacher-results-student-card-identity {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  
+  .teacher-results-student-card-identity
+  > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.18rem;
+  }
+  
+  .teacher-results-student-card-identity
+  strong {
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 0.78rem;
+    font-weight: 690;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .teacher-results-student-card-identity
+  div > span {
+    color: var(--color-text-subtle);
+    font-size: 0.64rem;
+    line-height: 1.4;
+  }
+  
+  .teacher-results-student-card-metrics {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 1rem 0 0;
+  }
+  
+  .teacher-results-student-card-metrics
+  div {
+    min-width: 0;
+    padding: 0.7rem;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+  
+  .teacher-results-student-card-metrics
+  div.is-wide {
+    grid-column: 1 / -1;
+  }
+  
+  .teacher-results-student-card-metrics
+  dt {
+    color: var(--color-text-subtle);
+    font-size: 0.62rem;
+    font-weight: 650;
+  }
+  
+  .teacher-results-student-card-metrics
+  dd {
+    margin: 0.3rem 0 0;
+    color: var(--color-text);
+    font-size: 0.72rem;
+    font-weight: 680;
+    line-height: 1.45;
+  }
+  
+  @media (max-width: 760px) {
+    .teacher-results-student-count
+    .ui-button {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 680px) {
+    .teacher-results-table-wrapper {
+      display: none;
+    }
+  
+    .teacher-results-student-card-list {
+      display: grid;
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .teacher-results-student-card-header {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .teacher-results-student-card-header
+    > .ui-status-badge {
+      align-self: flex-start;
+    }
+  
+    .teacher-results-student-card-metrics {
+      grid-template-columns: 1fr;
+    }
+  
+    .teacher-results-student-card-metrics
+    div.is-wide {
+      grid-column: auto;
+    }
+  }

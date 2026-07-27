@@ -54,7 +54,9 @@ import {
     TeacherClassroom,
     TeacherResultStudentStatus,
   } from "../types/teacher";
-  
+  import { StudentResultCard } from "../features/assessment-results/StudentResultCard";
+
+
   import "../styles/teacher-assessment-results.css";
   
   type ResultsTab =
@@ -467,9 +469,15 @@ import {
       recommendationSummary,
     } = results;
   
-    const topRecommendations = [
-      ...results.recommendations,
-    ]
+    const priorityRecommendations =
+    results.recommendations
+      .filter(
+        (recommendation) =>
+          recommendation.level ===
+            "CRITICAL" ||
+          recommendation.level ===
+            "DEVELOPING",
+      )
       .sort(
         (
           firstRecommendation,
@@ -477,8 +485,13 @@ import {
         ) =>
           firstRecommendation.priority -
           secondRecommendation.priority,
-      )
-      .slice(0, 3);
+      );
+  
+  const topRecommendations =
+    priorityRecommendations.slice(
+      0,
+      3,
+    );
   
     const hasStudentFilters =
       Boolean(
@@ -595,6 +608,26 @@ import {
           />
         </section>
   
+        {summary.totalSubmissions === 0 && (
+        <FeedbackBanner
+            tone="info"
+            title="A avaliação ainda não recebeu respostas"
+            description="Os dados estruturais já estão disponíveis, mas taxas de desempenho e prioridades pedagógicas serão calculadas após os primeiros envios."
+            action={
+            <Button
+                variant="secondary"
+                onClick={() =>
+                setActiveTab(
+                    "students",
+                )
+                }
+            >
+                Ver estudantes pendentes
+            </Button>
+            }
+        />
+        )}
+
         <PageTabs
           tabs={tabs}
           activeTab={activeTab}
@@ -649,9 +682,13 @@ import {
                     </div>
                   ) : (
                     <PageState
-                      icon={Target}
-                      title="Nenhuma prioridade disponível"
-                      description="As recomendações aparecerão quando houver dados suficientes."
+                        icon={Target}
+                        title="Nenhuma intervenção prioritária"
+                        description={
+                            summary.totalSubmissions === 0
+                            ? "As prioridades serão calculadas após o recebimento das primeiras respostas."
+                            : "Nenhuma habilidade foi classificada como crítica ou em desenvolvimento."
+                        }
                     />
                   )}
                 </section>
@@ -1060,8 +1097,9 @@ import {
                     </Button>
                   }
                 />
-              ) : (
-                <div className="teacher-results-table-wrapper">
+            ) : (
+                <>
+                  <div className="teacher-results-table-wrapper">
                   <table className="teacher-results-table">
                     <thead>
                       <tr>
@@ -1167,6 +1205,20 @@ import {
                     </tbody>
                   </table>
                 </div>
+                <div
+                    className="teacher-results-student-card-list"
+                    aria-label="Resultados dos estudantes"
+                >
+                    {filteredStudents.map(
+                    (student) => (
+                        <StudentResultCard
+                        key={student.studentId}
+                        student={student}
+                        />
+                    ),
+                    )}
+                </div>
+                </>
               )}
             </section>
           )}
